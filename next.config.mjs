@@ -6,12 +6,14 @@ const nextConfig = {
     return config;
   },
   async rewrites() {
-    return [
-      {
-        source: '/',
-        destination: '/CareProtocol_GiaoDien.html',
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/',
+          destination: '/CareProtocol_GiaoDien.html',
+        },
+      ],
+    };
   },
 };
 
