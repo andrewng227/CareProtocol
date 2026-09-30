@@ -1,98 +1,133 @@
-HEAD
-# CareProtocol — AI Rehab Tracker x Solana Devnet
+# 🏥 CareProtocol — Trợ Lý Phục Hồi Hậu Phẫu Thông Minh x Solana Blockchain
 
-MVP hackathon: đếm cử động phục hồi hậu phẫu bằng MediaPipe Pose ngay trên trình duyệt,
-sau đó ký giao dịch Solana Devnet (qua ví Phantom) để ghi nhận bằng chứng tuân thủ điều trị
-một cách bất biến, chi phí gần như 0đ.
+<p align="center">
+  <img src="https://img.shields.io/badge/Solana-Devnet-14F195?style=for-the-badge&logo=solana&logoColor=black" alt="Solana Devnet" />
+  <img src="https://img.shields.io/badge/AI-MediaPipe_Pose-FF6F00?style=for-the-badge&logo=google&logoColor=white" alt="MediaPipe" />
+  <img src="https://img.shields.io/badge/Google_Gemini-Vision_AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini Vision" />
+  <img src="https://img.shields.io/badge/Next.js-14.2-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
+</p>
 
-## 0. Yêu cầu trước khi bắt đầu
-
-- Máy tính có Node.js **≥ 18** (kiểm tra: `node -v`).
-- Trình duyệt Chrome hoặc Edge (để MediaPipe dùng được GPU delegate) có webcam.
-- Tiện ích mở rộng ví **Phantom Wallet** (cài từ https://phantom.app).
-
----
-
-## A. Hướng dẫn bấm máy từng bước — Cài đặt & chạy dự án
-
-1. **Mở Terminal** (Windows: PowerShell; macOS: Terminal) tại thư mục chứa mã nguồn `careprotocol/`.
-2. Gõ lệnh sau rồi bấm **Enter** để cài thư viện:
-   ```
-   npm install
-   ```
-   Chờ đến khi terminal hiện lại dấu nhắc lệnh (không còn chạy).
-3. (Tuỳ chọn) Sao chép file cấu hình mạng:
-   ```
-   cp .env.example .env.local
-   ```
-4. Khởi chạy server phát triển:
-   ```
-   npm run dev
-   ```
-5. Terminal sẽ hiện dòng `Local: http://localhost:3000`. Mở trình duyệt, gõ địa chỉ đó và bấm **Enter**.
+> **CareProtocol** là nền tảng y tế số tiên phong kết hợp **AI Computer Vision (MediaPipe Pose)** và **Blockchain (Solana)** nhằm hỗ trợ bệnh nhân tự phục hồi chức năng hậu phẫu tại nhà chuẩn y khoa, minh bạch dữ liệu điều trị và xác thực tuân thủ bất biến với chi phí gần như bằng 0.
 
 ---
 
-## B. Hướng dẫn bấm máy từng bước — Cấu hình ví Phantom sang Devnet
+## 🌟 Các Tính Năng Nổi Bật (Key Features)
 
-1. Bấm vào **icon Phantom** trên thanh công cụ trình duyệt (góc trên bên phải).
-2. Bấm **icon bánh răng (Settings)** ở góc dưới bên phải cửa sổ Phantom.
-3. Chọn mục **"Developer Settings"**.
-4. Bật công tắc **"Testnet Mode"**.
-5. Quay lại màn hình chính Phantom, bấm vào tên mạng ở trên cùng (mặc định "Mainnet"), chọn **"Devnet"** trong danh sách xổ xuống.
-6. (Nếu ví chưa có SOL) Copy địa chỉ ví (bấm vào tên tài khoản để copy), mở tab mới vào `https://faucet.solana.com`, dán địa chỉ, chọn mạng **Devnet**, bấm **Confirm Airdrop** — hoặc dùng nút "Xin 1 SOL Devnet" ngay trong app CareProtocol ở bước D.4 dưới đây.
+### 1. 🏃 AI Huấn Luyện Viên Phục Hồi (Edge AI Pose Tracking)
+- **Xử lý 100% On-Device (Client-side):** Sử dụng MediaPipe Pose chạy trực tiếp trên GPU trình duyệt qua WebAssembly, đảm bảo hình ảnh/video riêng tư của bệnh nhân không bao giờ rời khỏi máy.
+- **Phân tích Biên độ Vận động (ROM - Range of Motion):** Đo góc gập duỗi khớp gối/vai thời gian thực, đếm số lần lặp (reps) chính xác và cảnh báo khi vượt ngưỡng an toàn.
+- **Trợ lý Giọng nói Tiếng Việt:** Hướng dẫn, đếm nhịp và khích lệ người bệnh phát âm chuẩn y khoa offline.
 
----
+### 2. 📋 Cổng Hồ Sơ Bệnh Án Điện Tử (Personal Patient EMR)
+- **Quản lý Hồ sơ Cá nhân:** Tra cứu và chỉnh sửa thông tin bệnh nhân, số điện thoại, địa chỉ nhà, liên hệ khẩn cấp của người thân.
+- **Cơ chế Phân quyền Thông minh:** Tự động bảo mật và ẩn/hiện các tab Quản lý/Đổi tài khoản linh hoạt theo trạng thái đăng nhập.
+- **Đa dạng Phác đồ Phẫu thuật:** Hỗ trợ chuẩn hóa phác đồ cho Thay khớp gối (TKA), Tái tạo dây chằng (ACL), Mổ bắt con (C-Section), Thoát vị đĩa đệm cột sống...
 
-## C. Hướng dẫn bấm máy từng bước — Demo chức năng AI đếm cử động
+### 3. 🔍 Trợ Lý Đơn Thuốc & Quan Sát Vết Mổ (Multimodal AI)
+- **Gemini Vision OCR:** Nhận diện và trích xuất liều lượng, cách dùng từ ảnh chụp toa thuốc thực tế.
+- **Camera Vết Mổ & Triệu Chứng:** Hỗ trợ chụp và theo dõi tiến trình hồi phục vết mổ, phát hiện sớm dấu hiệu nhiễm trùng.
 
-1. Trên trang `http://localhost:3000`, bấm nút **"Bắt đầu tập"**.
-2. Trình duyệt hiện hộp thoại xin quyền camera → bấm **"Allow" / "Cho phép"**.
-3. Lùi người ra sau để camera thấy trọn thân người (đặc biệt là chân phải: hông – gối – cổ chân).
-4. Thực hiện động tác **gập gối lên rồi duỗi thẳng chân trở lại** — lặp lại đủ 10 lần.
-5. Quan sát góc số ở góc trên bên trái video ("Góc gối: …°") và bộ đếm ở giữa màn hình tự tăng lên sau mỗi lần gập–duỗi hoàn chỉnh.
-6. Khi đạt đủ **10/10 lần**, camera tự tắt và màn hình chuyển sang bước ghi nhận on-chain.
-
----
-
-## D. Hướng dẫn bấm máy từng bước — Ký & ghi nhận on-chain
-
-1. Bấm nút **"Connect Wallet"** ở góc trên bên phải trang web.
-2. Trong popup Phantom hiện ra, bấm **"Connect"**.
-3. Kiểm tra dòng chữ "Solana Devnet" ở góc trên bên trái đang có chấm xanh nhấp nháy (đúng mạng thử nghiệm).
-4. Nếu số dư Devnet = 0, bấm nút **"1. Xin 1 SOL Devnet (miễn phí)"**, chờ vài giây tới khi số dư hiển thị.
-5. Bấm nút **"2. Ký & ghi nhận lên Solana Devnet"**.
-6. Phantom hiện popup yêu cầu ký giao dịch → xem qua nội dung → bấm **"Confirm" / "Approve"**.
-7. Chờ 1–2 giây, trang hiển thị dòng chữ ký giao dịch (transaction signature) và nút **"Xem trên Solana Explorer (Devnet) →"**.
-8. Bấm vào nút đó để mở Solana Explorer, cho Ban Giám khảo thấy giao dịch thật đã được xác nhận trên blockchain kèm timestamp block.
+### 4. ⚡ Xác Thực Tuân Thủ On-Chain (Solana Blockchain Verification)
+- **Bằng chứng Bất biến (Proof-of-Rehab):** Gói gọn số lần tập, biên độ ROM và hàm băm SHA-256 vào giao dịch Solana Devnet qua ví Phantom.
+- **Chi phí siêu rẻ & Tốc độ tức thì:** Lưu trữ phân tán, chống gian lận bảo hiểm y tế và giúp bác sĩ điều trị dễ dàng tra cứu qua Solana Explorer.
 
 ---
 
-## Kiến trúc kỹ thuật (tóm tắt)
+## 🏛️ Kiến Trúc Hệ Thống (System Architecture)
 
-```
-Trình duyệt bệnh nhân
- ├─ MediaPipe Pose (chạy 100% client, WASM/GPU) → đếm rep + chấm điểm form
- ├─ SHA-256 hash bằng chứng phục hồi (Web Crypto API)
- └─ Ví Phantom ký giao dịch chứa memo (proofHash, reps, timestamp)
-        │
-        ▼
-   Solana Devnet — SPL Memo Program
-   (bất biến, có thể tra cứu công khai qua chữ ký giao dịch)
+```text
+       ┌─────────────────────────────────────────────────────────┐
+       │                   TRÌNH DUYỆT BỆNH NHÂN                  │
+       │                                                         │
+       │   [ Camera Web / Mobile ]                               │
+       │              │                                          │
+       │              ▼                                          │
+       │   [ MediaPipe Pose Engine ] ──► Đo góc ROM & Đếm Reps   │
+       │              │                                          │
+       │              ▼                                          │
+       │   [ Web Crypto API ] ─────────► Tạo Hash SHA-256        │
+       │              │                                          │
+       │              ▼                                          │
+       │   [ Phantom Solana Wallet ] ──► Ký giao dịch Memo       │
+       └──────────────┬──────────────────────────────────────────┘
+                      │ (RPC On-Chain)
+                      ▼
+       ┌─────────────────────────────────────────────────────────┐
+       │                    SOLANA BLOCKCHAIN                    │
+       │   - SPL Memo Program / Anchor Smart Contract            │
+       │   - Immutable Tx Hash & Merkle Proof Timestamp          │
+       │   - Public Explorer Verification                        │
+       └─────────────────────────────────────────────────────────┘
 ```
 
-- Không video/hình ảnh nào rời khỏi trình duyệt — chỉ có **hash + số liệu tổng hợp** được ghi on-chain.
-- Dùng SPL Memo Program (đã có sẵn trên mọi cluster Solana) để MVP chạy được ngay trong thời gian hackathon mà không cần viết/deploy chương trình Anchor riêng.
-- Roadmap: thay Memo Program bằng Anchor Program tự viết, lưu `RecoveryPlan` vào PDA (Program Derived Address) theo mã ca phẫu thuật, và phát hành SBT (Non-Transferable Token, dùng Token-2022 `NonTransferable` extension trên Solana) làm "Hồ sơ phục hồi" cho bệnh nhân.
+---
 
-## Khắc phục sự cố thường gặp
+## 🚀 Hướng Dẫn Cài Đặt & Chạy Cục Bộ (Getting Started)
 
-| Vấn đề | Cách xử lý |
-|---|---|
-| Camera không mở được | Kiểm tra trình duyệt đã cấp quyền Camera trong `Settings > Privacy`. |
-| AI không đếm được rep | Đứng lùi xa hơn, đảm bảo đủ ánh sáng và chân phải nằm trọn trong khung hình. |
-| Airdrop báo lỗi "429 rate limited" | Devnet giới hạn tần suất công khai — chờ 1-2 phút hoặc dùng `https://faucet.solana.com`. |
-| Phantom không hiện nút Connect | Đảm bảo đã cài extension Phantom và tải lại trang (F5). |
+### 1. Yêu cầu tiên quyết
+- **Node.js** phiên bản ≥ 18.x ([Tải Node.js](https://nodejs.org/))
+- Trình duyệt **Google Chrome / Microsoft Edge / Brave** (hỗ trợ tăng tốc phần cứng WebGL/GPU)
+- Tiện ích ví **Phantom Wallet** ([Cài đặt Phantom](https://phantom.app/))
 
-# CareProtocol-Web
->>>>>>> 6bf4ee3b86bca87f16c9c550099b8bf521ce74e0
+### 2. Cài đặt và khởi chạy
+
+```bash
+# 1. Clone repository về máy
+git clone https://github.com/andrewng227/CareProtocol.git
+cd CareProtocol
+
+# 2. Cài đặt các thư viện phụ thuộc
+npm install
+
+# 3. Khởi chạy môi trường phát triển (Dev Server)
+npm run dev
+```
+
+Mở trình duyệt và truy cập: **`http://localhost:3000`**
+
+*(Hoặc anh có thể mở trực tiếp file `CareProtocol_GiaoDien.html` trong trình duyệt để trải nghiệm ngay bản Standalone).*
+
+---
+
+## 📱 Cấu Hình Ví Phantom Sang Solana Devnet
+
+1. Bấm vào icon **Phantom Wallet** trên thanh công cụ trình duyệt.
+2. Nhấn vào **Cài đặt (Settings ⚙️)** ở góc dưới bên phải.
+3. Chọn **Cài đặt nhà phát triển (Developer Settings)** ➔ Bật **Chế độ mạng thử nghiệm (Testnet Mode)**.
+4. Đổi mạng từ **Mainnet** sang **Devnet**.
+5. Nhận SOL thử nghiệm miễn phí tại [Solana Faucet](https://faucet.solana.com) hoặc bấm nút **"Xin SOL Devnet"** trực tiếp trên giao diện CareProtocol.
+
+---
+
+## 📂 Cấu Trúc Thư Mục Dự Án (Project Structure)
+
+```text
+CareProtocol/
+├── app/                  # Next.js App Router (Dashboard, APIs, Routing)
+├── public/               # Static Assets, HTML Standalone & Audio Packs
+│   ├── CareProtocol_GiaoDien.html  # Giao diện ứng dụng chính
+│   ├── google_female_voice_pack.js # Gói âm thanh giọng đọc AI
+│   └── hoadonthuoc.jpg             # Ảnh mẫu đơn thuốc thử nghiệm
+├── src/                  # React Components & giao diện mở rộng
+├── lib/                  # Tiện ích Speech AI, Solana Web3 & Dữ liệu y khoa
+├── next.config.mjs       # Cấu hình Next.js & điều hướng trang
+├── package.json          # Quản lý danh sách thư viện & scripts
+└── README.md             # Tài liệu dự án
+```
+
+---
+
+## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
+
+- **Frontend Core:** Next.js 14, React 18, Tailwind CSS, Lucide Icons
+- **AI & Vision:** Google MediaPipe Tasks Vision, Google Gemini API
+- **Web3 & Blockchain:** `@solana/web3.js`, `@solana/wallet-adapter`
+- **Audio Engine:** HTML5 Web Audio API & Offline Voice Pack
+
+---
+
+<p align="center">
+  Được phát triển với niềm đam mê nâng tầm chăm sóc y tế thông minh và minh bạch hóa dữ liệu phục hồi hậu phẫu. ❤️
+</p>
