@@ -1,0 +1,167 @@
+================================================================================
+KẾ HOẠCH HÀNH ĐỘNG CHI TIẾT THEO YÊU CẦU ĐỒ ÁN CAREPROTOCOL (CAREPROTOCOL.PDF)
+CUỘC THI: UNIHACKFEST 2026 / JUNIOR HACK (VLU x KOREA ACADEMY)
+ĐỘI THI: CORELIA ACADEMY (1 BUILDER, 1 PITCHER) - KHOA CNTT ĐẠI HỌC VĂN LANG
+THỜI GIAN KẾT XUẤT: 25/09/2026
+================================================================================
+
+I. TỔNG QUAN ĐỊNH VỊ DỰ ÁN (EXECUTIVE SUMMARY)
+--------------------------------------------------------------------------------
+1. TÊN ĐỀ TÀI:
+   CAREPROTOCOL – Giao thức điều dưỡng số chủ động, giải mã bệnh viện toàn diện
+   & xác thực phục hồi đa chuyên khoa trên nền tảng Solana Blockchain.
+2. TÊN THƯƠNG HIỆU & HỆ ĐIỀU HÀNH:
+   CareProtocol Universal OS (Proactive Clinical Agent / Invisible Health Guardian).
+3. ĐỊNH VỊ CỐT LÕI:
+   - Một ca can thiệp ngoại khoa hay điều trị nội trú chỉ quyết định 30% kết quả lâm sàng;
+     70% thành công còn lại phụ thuộc vào quá trình phục hồi, tuân thủ dùng thuốc,
+     chế độ dinh dưỡng và tập luyện tại nhà.
+   - Không dừng lại ở việc thụ động chờ bệnh nhân gõ câu hỏi, CareProtocol là
+     "Hệ điều hành Điều dưỡng Số Chủ động 24/7" đứng cạnh giường bệnh người bệnh.
+4. BỐN TRỤ CỘT CÔNG NGHỆ:
+   (1) Hệ thống điều hướng lâm sàng chủ động (NPO countdown, viện phí, BHYT, dược học).
+   (2) Thư viện video Bác sĩ & Client-Side Edge AI Kinematics (MediaPipe Pose, Zero Data Leakage).
+   (3) Cơ chế Phê duyệt Kép (Dual-Approval Protocol - Human-in-the-Loop).
+   (4) Solana Web3 Trust Layer (Bằng chứng băm SHA-256 bất biến, tốc độ 400ms, phí < 0.00025$).
+
+
+II. DANH MỤC CÁC ĐẦU VIỆC CẦN TRIỂN KHAI TIẾP THEO ĐỂ BÁM SÁT 100% FILE PDF
+--------------------------------------------------------------------------------
+
+HẠNG MỤC 1: MỞ RỘNG MA TRẬN 10 CHUYÊN KHOA LÂM SÀNG TỰ ĐỘNG THÍCH ỨNG (CHƯƠNG 4)
+(Hiện tại web đang có 5 khoa đầu, cần cập nhật đầy đủ đủ 10 khoa vào hệ thống):
+
+[x] Khoa 1: Chấn thương chỉnh hình
+    - Bệnh lý: Đứt dây chằng chéo trước (ACL), thay khớp gối, thay khớp háng.
+    - Khớp AI quét: Khớp hông (P24), Đầu gối (P26), Mắt cá chân (P28).
+    - Giới hạn Kinematics: Co gối 110° - 155°; lệch vai < 8% (cấm vẹo người bù lực).
+    - Dược học & Dinh dưỡng: Paracetamol 500mg, Alphachymotrypsin; kiêng nếp, bổ sung Collagen Type II.
+
+[x] Khoa 2: Thần kinh & Đột quỵ
+    - Bệnh lý: Tai biến mạch máu não (nhồi máu/xuất huyết), yếu liệt nửa người.
+    - Khớp AI quét: Mỏm cùng vai (P12), Khuỷu tay (P14), Cổ tay (P16).
+    - Giới hạn Kinematics: Mở khớp vai ngang trục 40° - 90°; phát hiện rung giật cơ / hạ tay đột ngột.
+    - Dược học & Dinh dưỡng: Aspirin 81mg, Citicoline 500mg; thức ăn xay nhuyễn chống sặc, giàu Omega-3.
+
+[x] Khoa 3: Sản phụ khoa
+    - Bệnh lý: Hậu phẫu sinh mổ (C-Section), sa tử cung, bóc u xơ tử cung.
+    - Khớp AI quét: Trục cột sống (P11, P12), Khung chậu, Khớp đùi (P24).
+    - Giới hạn Kinematics: Góc gập thân < 30°; cấm áp lực ép cơ thẳng bụng dưới làm toác vết mổ.
+    - Dược học & Dinh dưỡng: Cefuroxime 500mg, Sắt & Acid Folic; thức ăn mềm, nhuận tràng chống táo bón rặn mổ.
+
+[x] Khoa 4: Ngoại tiêu hóa & Gan mật
+    - Bệnh lý: Mổ nội soi ruột thừa, cắt túi mật nội soi, thoát vị bẹn, cắt đại tràng.
+    - Khớp AI quét: Cổ chân (P28), Khớp gối (P26), Nhịp thở phồng xẹp cơ hoành.
+    - Giới hạn Kinematics: Gấp duỗi cổ chân 120° - 170°; thở sâu cơ hoành thoát khí CO2 tồn dư ổ bụng.
+    - Dược học & Dinh dưỡng: Drotaverine 40mg chống co thắt, Oresol bù nước; cháo loãng, kiêng đồ sinh hơi.
+
+[x] Khoa 5: Cột sống & Cơ xương khớp
+    - Bệnh lý: Thoát vị đĩa đệm thắt lưng (L4-L5/L5-S1), thoái hóa đốt sống cổ, nẹp vít cột sống.
+    - Khớp AI quét: Lỗ tai (P8), Mỏm vai (P12), Mào chậu (P24).
+    - Giới hạn Kinematics: Trục đứng thân 165° - 180°; phát hiện tư thế gù cổ rùa (Forward Head > 15°).
+    - Dược học & Dinh dưỡng: Celecoxib 200mg, Vitamin 3B; bổ sung Magie, Chondroitin, nằm nệm vững.
+
+[ ] CẦN LÀM - Khoa 6: Ngoại tim mạch & Lồng ngực
+    - Bệnh lý: Hậu phẫu bắc cầu động mạch vành (CABG), thay van tim, phẫu thuật lồng ngực mở.
+    - Khớp AI quét: Xương ức, Khớp vai (P11, P12), Khuỷu tay (P13, P14).
+    - Giới hạn Kinematics: Nâng hai cánh tay không quá 90°; cấm đẩy/kéo vật nặng > 2kg bảo vệ xương ức.
+    - Dược học & Dinh dưỡng: Kháng đông Warfarin / Clopidogrel, Chẹn Beta; ăn nhạt giảm muối (< 3g/ngày).
+
+[ ] CẦN LÀM - Khoa 7: Ngoại tiết niệu & Nam khoa
+    - Bệnh lý: Tán sỏi thận qua da (PCNL), nội soi cắt u xơ tiền liệt tuyến (TURP).
+    - Khớp AI quét: Khớp háng (P23, P24), Khớp gối (P25, P26).
+    - Giới hạn Kinematics: Vận động đi lại nhẹ nhàng nhịp bước 40 - 60 bước/phút; cấm ngồi xổm hoặc rặn mạnh.
+    - Dược học & Dinh dưỡng: Tamsulosin 0.4mg, Ciprofloxacin 500mg; uống đủ 2.5 - 3 lít nước/ngày, tránh nhịn tiểu.
+
+[ ] CẦN LÀM - Khoa 8: Tai Mũi Họng & Hàm mặt
+    - Bệnh lý: Phẫu thuật chỉnh xương hàm, cắt amidan, nội soi xoang mũi FESS.
+    - Khớp AI quét: Trục đầu (P0), Xương hàm, Hai vai (P11, P12).
+    - Giới hạn Kinematics: Giữ đầu cao góc 30° - 45° khi nằm; cấm cúi gập đầu thấp hơn tim gây tăng áp lực máu vết mổ.
+    - Dược học & Dinh dưỡng: Cefixime 200mg, Paracetamol; cháo lỏng nguội, cấm đồ ăn nóng, cay, cứng giòn.
+
+[ ] CẦN LÀM - Khoa 9: Phẫu thuật thẩm mỹ & Tạo hình
+    - Bệnh lý: Nâng ngực nội soi đặt túi, hút mỡ tạo hình thành bụng, căng da mặt.
+    - Khớp AI quét: Trục ngực, Cánh tay (P13, P14), Thân mình (P11, P23).
+    - Giới hạn Kinematics: Giới hạn tầm với tay ngang vai (< 80°); mang đai định hình liên tục 24/24h.
+    - Dược học & Dinh dưỡng: Kháng sinh Amoxicillin/Clavulanate, Giảm sưng Medrol; kiêng rau muống, thịt bò ngừa sẹo lồi.
+
+[ ] CẦN LÀM - Khoa 10: Bỏng & Tạo hình sẹo co rút
+    - Bệnh lý: Di chứng bỏng độ II-III vùng nách, khuỷu tay, bàn tay sau phẫu thuật ghép da.
+    - Khớp AI quét: Đầu ngón tay, Cổ tay (P15, P16), Khuỷu tay (P13, P14).
+    - Giới hạn Kinematics: Kéo giãn từ từ đạt góc duỗi tối đa 170°; duy trì bài tập kéo dãn mô sẹo 15 phút/lần.
+    - Dược học & Dinh dưỡng: Kem bôi trị sẹo Silicon gel, Vitamin C 1000mg; chế độ ăn giàu kẽm, đạm nạc thúc đẩy biểu mô hóa.
+
+--------------------------------------------------------------------------------
+HẠNG MỤC 2: HOÀN THIỆN 6 PHÂN HỆ GIAO DIỆN CHUẨN (CHƯƠNG 6)
+
+1. Phân hệ Đi khám & Tính toán BHYT Viện phí (Hospital Flow):
+   - Bản đồ 4 bước nhập viện: Tiếp đón -> Khám chuyên khoa -> Chụp MRI/Xét nghiệm -> Quầy tạm ứng.
+   - Bảng tính dòng tiền viện phí minh bạch 3 dòng:
+     Số tiền nốt = Tổng ca mổ (25tr) - BHYT (8tr) - Tạm ứng ngày 1 (10tr) = 7.000.000 VNĐ.
+   - Đồng hồ đếm ngược nhịn ăn uống y khoa (NPO Countdown): Nhịn ăn đặc 6h, nhịn nước lọc 2h trước mổ.
+
+2. Phân hệ Lộ trình Điều dưỡng Chủ động Hàng ngày (Daily Routine):
+   - Lịch trình cá nhân hóa 24/7 từ 07:00 đến 21:30 (cữ ăn, giờ chườm đá, kê cao chân khi ngủ).
+
+3. Phân hệ Sổ tay Dược học Lâm sàng (Meds Deep Dive):
+   - Bóc tách bản chất y khoa, lý do tiêm, ưu điểm & tác dụng phụ (Paracetamol, Cefuroxime, Enoxaparin tiêm bụng chống DVT).
+
+4. Phân hệ Giải mã Cảm giác Cơ thể & Triage Cảnh báo Đỏ (Body Signals):
+   - Giải mã sinh lý lạ: Ngứa ngáy (kéo da non), Xì hơi (nhu động ruột phục hồi), Sưng chân (ứ dịch trọng lực).
+   - Bộ lọc cờ đỏ cấp cứu: Sốt cao > 38.5°C, rỉ dịch mủ mùi hôi.
+
+5. Phân hệ Thủ tục Xuất viện & Kế hoạch Tái khám (Discharge & Follow-up):
+   - Hướng dẫn tất toán 7 triệu viện phí còn lại.
+   - Danh mục 3 chứng từ bắt buộc phải cầm về: Giấy ra viện gốc, Giấy chứng nhận phẫu thuật, Đơn thuốc 14 ngày.
+   - Thiết lập 2 mốc hẹn tái khám: Tháo chỉ (ngày 12), Chụp X-quang đối chiếu (ngày 35).
+
+6. Phân hệ Màn hình Chia đôi: Video Bác sĩ & AI Camera Phục hồi (Scanner DTx):
+   - Split-screen: Video Bác sĩ thị phạm (khung trái) song song Camera AI MediaPipe Pose (khung phải).
+   - Quét 33 điểm mốc sinh học, cảnh báo đèn giao thông khi vẹo cột sống lưng bù lực.
+   - Đủ 5 chu kỳ: Ký giao dịch ví Phantom trong 400ms và xuất liên kết Solana Explorer.
+
+--------------------------------------------------------------------------------
+HẠNG MỤC 3: CƠ CHẾ PHÊ DUYỆT KÉP (DUAL-APPROVAL PROTOCOL - CHƯƠNG 3.2)
+- Bước 1 (Global Knowledge): AI RAG truy xuất tri thức lâm sàng (AAOS, ACOG, SAGES, WHO).
+- Bước 2 (AI Drafts Protocol): AI đề xuất phác đồ phân tầng từng ngày.
+- Bước 3 (Doctor Approval - Human-in-the-Loop): Bác sĩ phụ trách kiểm tra và bấm nút Ký duyệt số (Solana Keypair).
+- Bước 4 (AI Camera Execution): Bệnh nhân tập đúng biên độ góc khớp bác sĩ đã ký duyệt.
+- Bước 5 (Solana PDA Log): Ghi bằng chứng hoàn thành bất biến lên sổ cái Solana Devnet.
+
+--------------------------------------------------------------------------------
+HẠNG MỤC 4: KỊCH BẢN THUYẾT TRÌNH PITCHING 3 PHÚT (VĂN PHONG VLU - CHƯƠNG 8)
+Phân vai 2 người: BUILDER (Thao tác máy) & PITCHER (Thuyết minh trang trọng):
+
+• 0:00 – 0:50 | Pitcher:
+  "Kính thưa Hội đồng Giám khảo, một ca phẫu thuật chỉ quyết định 30% kết quả;
+   70% còn lại nằm ở quá trình phục hồi. Nỗi đau của người bệnh không chỉ xuất hiện khi về nhà
+   mà bắt đầu ngay từ khi nhập viện: hoang mang lo sợ gây mê, quên nhịn ăn uống, rồi đến khi xuất viện
+   thì bơ vơ với tờ giấy khó hiểu, sợ đau nằm bất động gây huyết khối tĩnh mạch sâu tử vong
+   hoặc tự tập sai gây toác vết mổ. CareProtocol ra đời như một Hệ điều hành Điều dưỡng số chủ động 24/7,
+   đồng hành từ giây phút bước chân vào viện đến khi hồi phục hoàn toàn tại nhà."
+
+• 0:50 – 2:00 | Builder & Pitcher phối hợp:
+  - Builder: Thao tác bấm Quét OCR, bật camera AI tập gập chân (hoặc chạy Clinical Sandbox),
+    cố tình nghiêng người vẹo cột sống để kích hoạt Đèn đỏ cảnh báo.
+  - Pitcher: Thuyết minh cơ chế AI on-device 33 điểm, Zero Data Leakage (RAM trình duyệt, không gửi video ra ngoài).
+    Cảnh báo lệch trục cột sống > 8%. Khi tập đủ 5 chu kỳ, mở khóa nút xác nhận on-chain.
+
+• 2:00 – 2:30 | Builder & Pitcher:
+  - Builder: Bấm nút Ký xác nhận -> Ví Phantom xác thực -> Mở liên kết Solana Explorer Devnet.
+  - Pitcher: "Bằng chứng hoàn thành được đóng dấu vào sổ cái Solana Devnet trong 400 mili-giây với chi phí gần như bằng 0.
+    Hệ thống tích hợp ma trận phác đồ bao quát 10 chuyên khoa ngoại khoa."
+
+• 2:30 – 3:00 | Pitcher:
+  - Trình bày tầm nhìn: "Tại sao bắt buộc phải là Solana? Tần suất check-in y tế diễn ra hàng ngày,
+    chỉ có tốc độ dưới 1 giây và phí siêu vi mô của Solana mới giúp bài toán kiểm toán y tế này có tính khả thi kinh tế.
+    Dữ liệu on-chain này tạo lập hồ sơ Verifiable Health Credentials giúp bệnh viện đối soát pháp lý
+    và công ty bảo hiểm tự động hóa giải ngân bồi thường theo cơ chế bảo hiểm tham số.
+    CareProtocol – Đưa công nghệ phục hồi chuẩn y khoa đến từng giường bệnh gia đình.
+    Xin trân trọng cảm ơn Hội đồng Giám khảo!"
+
+================================================================================
+GHI CHÚ HÀNH ĐỘNG TIẾP THEO:
+1. Mở file CareProtocol_KeHoach_HanhDong.txt trên Desktop để đối chiếu.
+2. Cập nhật mã nguồn CareProtocol_GiaoDien.html và public/CareProtocol_GiaoDien.html
+   để hoàn thiện 5 khoa ngoại khoa còn lại và các widget NPO / viện phí 3 dòng.
+================================================================================

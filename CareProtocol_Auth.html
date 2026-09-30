@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareProtocol — Đăng Ký & Đăng Nhập Cổng Bệnh Nhân</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#0F766E',
+            'brand-soft': '#F0FDFA',
+            dark: '#14231F'
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8FAF9;
+    }
+
+    .otp-input:focus {
+      border-color: #0F766E;
+      box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.2);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="bg-white border-b border-[#E7ECE9] sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+      <!-- Logo -->
+      <a href="CareProtocol_GiaoDien.html" class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-teal-800 flex items-center justify-center text-white font-bold text-lg shadow-xs">
+          🩺
+        </div>
+        <div>
+          <p class="font-bold text-base sm:text-lg leading-tight text-slate-900">CareProtocol</p>
+          <p class="text-[11px] text-[#71807B]">Cổng Định Danh &amp; Đồng Bộ Hồ Sơ Bệnh Nhân</p>
+        </div>
+      </a>
+
+      <!-- Quick Actions -->
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-flex items-center gap-1.5 text-xs bg-teal-50 text-teal-800 px-3 py-1.5 rounded-xl font-semibold border border-teal-200">
+          <span class="w-2 h-2 rounded-full bg-teal-600 animate-pulse"></span>
+          <span>HL7/FHIR &amp; Solana Connected</span>
+        </span>
+        <a href="CareProtocol_GiaoDien.html"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5 shadow-2xs">
+          <span>←</span>
+          <span>Về Cổng Bệnh Nhân</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN AUTH CONTAINER ==================== -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1 w-full flex items-center justify-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
+
+      <!-- CỘT TRÁI: GIỚI THIỆU HỆ THỐNG ĐỒNG BỘ Y KHOA (5 COLS) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
+          <span>🏥</span>
+          <span>Hệ Thống Phục Hồi Chức Năng Số Hóa</span>
+        </div>
+
+        <div class="space-y-3">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight">
+            Đồng bộ liệu trình từ <span class="text-teal-800">Cổng Bác Sĩ</span> sang ứng dụng của bạn
+          </h1>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Chỉ cần nhập số điện thoại và Mã Bệnh Nhân được cấp tại bệnh viện, hệ thống sẽ tự động liên kết phác đồ phục hồi, đơn thuốc điện tử và bác sĩ phụ trách.
+          </p>
+        </div>
+
+        <!-- 3 Điểm Nổi Bật -->
+        <div class="space-y-3.5 pt-2">
+          <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-[#E7ECE9] shadow-xs">
+            <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center font-bold text-lg shrink-0">
+              🔄
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-900">Liên kết 2 chiều với Bác sĩ điều trị</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Mọi cập nhật điều chỉnh góc tập hay đơn thuốc từ bác sĩ sẽ được đồng bộ tức thì.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-[#E7ECE9] shadow-xs">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center font-bold text-lg shrink-0">
+              💊
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-900">Nhắc thuốc &amp; Checklist mỗi ngày</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Tự động nạp đúng tên thuốc, hàm lượng, số lượng và cữ uống đã được ký số.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-[#E7ECE9] shadow-xs">
+            <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-800 flex items-center justify-center font-bold text-lg shrink-0">
+              🛡️
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-900">Bảo mật chuẩn Y tế &amp; Solana Verified</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Xác thực mã OTP SMS an toàn, bảo vệ dữ liệu bệnh án theo chuẩn HL7/FHIR.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI: FORM ĐĂNG KÝ / ĐĂNG NHẬP / XÁC THỰC OTP (7 COLS) -->
+      <div class="lg:col-span-7">
+        <div class="bg-white border border-[#E7ECE9] rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+
+          <!-- TOP TABS: ĐĂNG KÝ vs ĐĂNG NHẬP -->
+          <div id="authTabsContainer" class="flex items-center gap-1 bg-[#F1F4F2] p-1.5 rounded-2xl border border-[#E7ECE9] mb-6">
+            <button id="tabRegisterBtn" onclick="switchAuthTab('register')"
+              class="flex-1 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer bg-white text-slate-900 shadow-2xs">
+              <span>✍️</span>
+              <span>Đăng Ký Tài Khoản</span>
+            </button>
+            <button id="tabLoginBtn" onclick="switchAuthTab('login')"
+              class="flex-1 py-2.5 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2 cursor-pointer text-slate-600 hover:text-slate-900">
+              <span>🔑</span>
+              <span>Đăng Nhập Bệnh Nhân</span>
+            </button>
+          </div>
+
+          <!-- ==================== BƯỚC 1A: FORM ĐĂNG KÝ ==================== -->
+          <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block font-bold text-xs text-slate-700 mb-1.5">Họ và tên bệnh nhân *</label>
+              <input type="text" id="regPatientName" required placeholder="VD: Nguyễn Văn Hùng"
+                class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm font-semibold">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-xs text-slate-700 mb-1.5">Số điện thoại *</label>
+                <input type="tel" id="regPhone" required placeholder="0912 345 678" value="0912 345 678"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm font-semibold">
+              </div>
+              <div>
+                <label class="block font-bold text-xs text-slate-700 mb-1.5">Mã Bệnh Nhân (Patient ID) *</label>
+                <input type="text" id="regPatientId" required placeholder="VD: BN-2026-081" value="BN-2026-081"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm font-mono font-bold text-teal-800 uppercase">
+              </div>
+            </div>
+
+            <!-- Điều khoản -->
+            <div class="flex items-start gap-2 pt-1 text-xs text-slate-600">
+              <input type="checkbox" id="regTerms" checked required class="mt-0.5 rounded text-teal-800 focus:ring-teal-600">
+              <label for="regTerms">
+                Tôi đồng ý liên kết hồ sơ y tế với Cổng Bác Sĩ điều trị và tuân thủ các quy định bảo mật HIPAA/HL7.
+              </label>
+            </div>
+
+            <!-- Nút gửi OTP -->
+            <button type="submit"
+              class="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-800 to-emerald-700 hover:from-teal-900 hover:to-emerald-800 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+              <span>📲</span>
+              <span>Đăng Ký &amp; Nhận Mã OTP (SMS)</span>
+            </button>
+          </form>
+
+          <!-- ==================== BƯỚC 1B: FORM ĐĂNG NHẬP ==================== -->
+          <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-4 hidden">
+            <div>
+              <label class="block font-bold text-xs text-slate-700 mb-1.5">Số điện thoại hoặc Mã Bệnh Nhân *</label>
+              <input type="text" id="loginIdentifier" required placeholder="Nhập SĐT hoặc Mã BN (VD: BN-2026-081)" value="BN-2026-081"
+                class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm font-semibold">
+            </div>
+
+            <div class="bg-[#F8FAF9] border border-[#E7ECE9] rounded-2xl p-3.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-slate-700">Tài khoản bệnh nhân mẫu đăng nhập nhanh:</span>
+                <span class="text-[10px] text-teal-800 font-semibold">1-Click</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <button type="button" onclick="document.getElementById('loginIdentifier').value='BN-2026-081'"
+                  class="p-2 rounded-xl bg-white border border-slate-200 hover:border-teal-500 hover:bg-teal-50/50 text-left transition font-semibold cursor-pointer">
+                  Nguyễn Văn Hùng (#081)
+                </button>
+                <button type="button" onclick="document.getElementById('loginIdentifier').value='BN-2026-094'"
+                  class="p-2 rounded-xl bg-white border border-slate-200 hover:border-teal-500 hover:bg-teal-50/50 text-left transition font-semibold cursor-pointer">
+                  Trần Thị Mai (#094)
+                </button>
+              </div>
+            </div>
+
+            <!-- Nút gửi OTP đăng nhập -->
+            <button type="submit"
+              class="w-full py-3.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+              <span>📲</span>
+              <span>Gửi Mã OTP Đăng Nhập</span>
+            </button>
+          </form>
+
+          <!-- ==================== BƯỚC 2: MÀN HÌNH NHẬP MÃ OTP ==================== -->
+          <div id="stepOtp" class="space-y-5 hidden">
+            <div class="text-center space-y-1.5">
+              <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-800 border border-teal-200 flex items-center justify-center text-2xl mx-auto font-black">
+                📲
+              </div>
+              <h3 class="font-extrabold text-xl text-slate-900">Xác Thực Mã OTP SMS</h3>
+              <p class="text-xs text-slate-600">
+                Mã xác thực 6 số đã được gửi qua tin nhắn tới số điện thoại:
+              </p>
+              <p id="otpDisplayPhone" class="font-mono font-bold text-base text-teal-800">
+                0912 345 678
+              </p>
+            </div>
+
+            <!-- 6 Ô nhập OTP -->
+            <div class="flex items-center justify-center gap-2 sm:gap-3 py-2">
+              <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold font-mono rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-slate-900 shadow-2xs" value="1">
+              <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold font-mono rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-slate-900 shadow-2xs" value="2">
+              <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold font-mono rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-slate-900 shadow-2xs" value="3">
+              <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold font-mono rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-slate-900 shadow-2xs" value="4">
+              <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold font-mono rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-slate-900 shadow-2xs" value="5">
+              <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold font-mono rounded-xl border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-slate-900 shadow-2xs" value="6">
+            </div>
+
+            <!-- Gợi ý chế độ thử nghiệm -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center space-y-1">
+              <p class="text-xs text-amber-900 font-semibold">
+                ⚡ <em>Chế độ thử nghiệm lâm sàng: Đã tự động điền mã OTP hợp lệ.</em>
+              </p>
+              <button type="button" onclick="autoFillOtpAndVerify()"
+                class="text-xs font-bold text-teal-800 hover:text-teal-900 underline cursor-pointer">
+                Bấm vào đây để tự động nhập 123456 &amp; Xác thực 1-Click
+              </button>
+            </div>
+
+            <!-- Nút bấm xác thực -->
+            <div class="space-y-2 pt-2">
+              <button type="button" onclick="verifyOtpAndSync()"
+                class="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-800 to-emerald-700 hover:from-teal-900 hover:to-emerald-800 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                <span>✓</span>
+                <span>Xác Nhận &amp; Đồng Bộ Hồ Sơ Bác Sĩ</span>
+              </button>
+              <button type="button" onclick="backToStep1()"
+                class="w-full py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-600 font-semibold text-xs transition cursor-pointer">
+                ← Quay lại sửa thông tin
+              </button>
+            </div>
+          </div>
+
+          <!-- ==================== BƯỚC: MÀN HÌNH CHỜ ĐỒNG BỘ BÁC SĨ (PENDING DOCTOR SYNC) ==================== -->
+          <div id="stepPendingSync" class="space-y-4 hidden text-center">
+            <div class="relative w-16 h-16 mx-auto flex items-center justify-center">
+              <div class="absolute inset-0 rounded-full border-4 border-amber-200 border-t-amber-600 animate-spin"></div>
+              <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-black">
+                ⏳
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-[11px] font-bold">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                <span>Hồ sơ chưa có trên cổng Bác sĩ</span>
+              </div>
+              <h3 class="font-extrabold text-lg text-slate-900">Chưa Cập Nhật Hồ Sơ Bác Sĩ</h3>
+              <p class="text-xs text-slate-600 leading-relaxed px-1">
+                Hệ thống chưa tìm thấy hồ sơ chỉ định của bệnh nhân <strong id="pendingSyncName" class="text-slate-900">...</strong> (Mã: <strong id="pendingSyncId" class="text-teal-800 font-mono">...</strong>).
+              </p>
+            </div>
+
+            <!-- Banner thông báo & Ước tính thời gian chờ -->
+            <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-3.5 text-left space-y-2.5 text-xs">
+              <div class="flex items-start gap-2">
+                <span class="text-base shrink-0">📋</span>
+                <p class="text-[11px] text-amber-900 leading-relaxed">
+                  Bác sĩ điều trị hoặc điều dưỡng chưa hoàn tất phác đồ &amp; đơn thuốc điện tử. <strong>Vui lòng chờ thêm trong giây lát</strong> để hệ thống đồng bộ.
+                </p>
+              </div>
+
+              <!-- Đồng hồ đếm ngược -->
+              <div class="bg-white/90 rounded-xl p-2.5 border border-amber-200 flex items-center justify-between">
+                <span class="text-slate-600 text-[11px] font-medium">Tự động kiểm tra lại sau:</span>
+                <span class="font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-lg text-xs flex items-center gap-1">
+                  <span id="pendingTimerSec">45</span>s
+                </span>
+              </div>
+
+              <div class="text-[10px] text-slate-500 bg-amber-100/50 p-2 rounded-lg leading-relaxed">
+                💡 <strong>Thời gian chờ khuyến nghị:</strong> Thông thường hệ thống đồng bộ tự động trong <strong>30 - 60 giây</strong>. Nếu bác sĩ đang trong ca khám bệnh, có thể cần <strong>3 - 5 phút</strong>.
+              </div>
+            </div>
+
+            <!-- Các nút hành động -->
+            <div class="space-y-2 pt-1">
+              <button type="button" onclick="retryCheckDoctorSync()" id="btnRetrySync"
+                class="w-full py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>🔄</span>
+                <span>Kiểm Tra Lại Hồ Sơ Ngay</span>
+              </button>
+
+              <button type="button" onclick="simulateDoctorApproval()"
+                class="w-full py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold text-[11px] transition flex items-center justify-center gap-1 cursor-pointer">
+                <span>⚡</span>
+                <span>Mô phỏng: Bác sĩ vừa duyệt xong (Kích hoạt ngay)</span>
+              </button>
+
+              <div class="grid grid-cols-2 gap-2 pt-0.5">
+                <button type="button" onclick="useSamplePatientForDemo('BN-2026-081')"
+                  class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] transition text-center cursor-pointer">
+                  📋 Thử hồ sơ #081 mẫu
+                </button>
+                <button type="button" onclick="backToStep1()"
+                  class="py-2 px-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold text-[10px] transition text-center cursor-pointer">
+                  ← Sửa thông tin
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ==================== BƯỚC 3: MÀN HÌNH THÀNH CÔNG ==================== -->
+          <div id="stepSuccess" class="space-y-5 hidden text-center">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 border-2 border-emerald-300 flex items-center justify-center text-3xl mx-auto animate-bounce">
+              🎉
+            </div>
+
+            <div class="space-y-1">
+              <h3 class="font-extrabold text-xl text-slate-900">Xác Thực &amp; Đồng Bộ Thành Công!</h3>
+              <p class="text-xs text-slate-600">Đã liên kết tài khoản bệnh nhân với Cổng Bác Sĩ điều trị</p>
+            </div>
+
+            <!-- Thẻ thông tin đã liên kết -->
+            <div class="bg-[#F8FAF9] border border-teal-200 rounded-2xl p-4 text-left space-y-2.5 text-xs">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="text-slate-500">Bệnh nhân:</span>
+                <span id="succPatientName" class="font-bold text-slate-900 text-sm">Nguyễn Văn Hùng</span>
+              </div>
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="text-slate-500">Mã Bệnh Nhân:</span>
+                <span id="succPatientId" class="font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">BN-2026-081</span>
+              </div>
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="text-slate-500">Phẫu thuật / Chẩn đoán:</span>
+                <span id="succSurgery" class="font-semibold text-slate-800 text-right">Thay toàn bộ khớp gối phải (TKA)</span>
+              </div>
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="text-slate-500">Bác sĩ phụ trách:</span>
+                <span id="succSurgeon" class="font-semibold text-slate-800">TS.BS Lê Quang Minh</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-500">Đơn thuốc điện tử:</span>
+                <span id="succMedsCount" class="font-bold text-emerald-700">Đã đồng bộ 3 loại thuốc</span>
+              </div>
+            </div>
+
+            <!-- Chuyển hướng -->
+            <div class="space-y-2 pt-2">
+              <a href="CareProtocol_GiaoDien.html"
+                class="w-full py-3.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                <span>🚀</span>
+                <span>Vào Cổng Bệnh Nhân Ngay</span>
+              </a>
+              <p class="text-[11px] text-slate-400">
+                Tự động chuyển hướng sau <span id="countdownSec" class="font-bold text-teal-800">3</span> giây...
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-white border-t border-[#E7ECE9] py-4 text-center text-xs text-slate-500">
+    <p>© 2026 CareProtocol. Chuẩn định danh y tế điện tử kết nối Bệnh Nhân &amp; Bác Sĩ Điều Trị.</p>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // Dữ liệu bệnh nhân chuẩn kết nối từ Cổng Bác Sĩ
+    const DOCTOR_PATIENT_RECORDS = {
+      "BN-2026-081": {
+        id: "BN-2026-081",
+        name: "Nguyễn Văn Hùng",
+        phone: "0912 345 678",
+        surgery: "Thay toàn bộ khớp gối phải (TKA)",
+        protocolKey: "acl",
+        surgeon: "TS.BS Lê Quang Minh",
+        hospital: "Bệnh viện Chấn thương Chỉnh hình",
+        daysPostOp: 3,
+        medsCount: 3
+      },
+      "BN-2026-094": {
+        id: "BN-2026-094",
+        name: "Trần Thị Mai",
+        phone: "0988 765 432",
+        surgery: "Nội soi tái tạo dây chằng chéo trước (ACL)",
+        protocolKey: "acl",
+        surgeon: "Bác sĩ CareProtocol",
+        hospital: "Bệnh viện Đại học Y Dược TP.HCM",
+        daysPostOp: 5,
+        medsCount: 3
+      },
+      "BN-2026-102": {
+        id: "BN-2026-102",
+        name: "Lê Hoàng Quân",
+        phone: "0903 112 233",
+        surgery: "Phẫu thuật kết hợp xương bánh chè",
+        protocolKey: "acl",
+        surgeon: "TS.BS Hoàng Văn Hùng",
+        hospital: "Bệnh viện Trung Ương",
+        daysPostOp: 7,
+        medsCount: 3
+      },
+      "BN-2026-115": {
+        id: "BN-2026-115",
+        name: "Phạm Thị Thu Hà",
+        phone: "0918 223 344",
+        surgery: "Phục hồi sau Đột quỵ (Nhồi máu não)",
+        protocolKey: "stroke",
+        surgeon: "BS. Nguyễn Thị Lan",
+        hospital: "Bệnh viện Chợ Rẫy",
+        daysPostOp: 14,
+        medsCount: 3
+      },
+      "BN-2026-128": {
+        id: "BN-2026-128",
+        name: "Hoàng Kim Ngân",
+        phone: "0934 556 677",
+        surgery: "Hậu phẫu lấy thai lần 2 (Sinh mổ C-section)",
+        protocolKey: "csection",
+        surgeon: "BS. Đặng Thị Hồng",
+        hospital: "Bệnh viện Từ Dũ",
+        daysPostOp: 4,
+        medsCount: 3
+      },
+      "BN-2026-133": {
+        id: "BN-2026-133",
+        name: "Đỗ Minh Trí",
+        phone: "0908 119 922",
+        surgery: "Hậu phẫu cắt túi mật nội soi (Laparoscopy)",
+        protocolKey: "laparoscopy",
+        surgeon: "PGS.TS Bùi Văn Bình",
+        hospital: "Bệnh viện Bình Dân",
+        daysPostOp: 10,
+        medsCount: 1
+      },
+      "BN-2026-141": {
+        id: "BN-2026-141",
+        name: "Vũ Đức Thắng",
+        phone: "0977 445 566",
+        surgery: "Hậu phẫu giải áp cột sống L4-L5",
+        protocolKey: "spine",
+        surgeon: "TS.BS Vũ Đình Tuấn",
+        hospital: "Bệnh viện Việt Đức",
+        daysPostOp: 6,
+        medsCount: 2
+      }
+    };
+
+    let activeAuthMode = "register"; // 'register' hoặc 'login'
+    let pendingAuthData = {
+      name: "Nguyễn Văn Hùng",
+      phone: "0912 345 678",
+      patientId: "BN-2026-081"
+    };
+
+    function switchAuthTab(mode) {
+      activeAuthMode = mode;
+      const tabReg = document.getElementById("tabRegisterBtn");
+      const tabLog = document.getElementById("tabLoginBtn");
+      const formReg = document.getElementById("formRegister");
+      const formLog = document.getElementById("formLogin");
+
+      const actClass = "flex-1 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer bg-white text-slate-900 shadow-2xs";
+      const inactClass = "flex-1 py-2.5 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2 cursor-pointer text-slate-600 hover:text-slate-900";
+
+      if (mode === "register") {
+        tabReg.className = actClass;
+        tabLog.className = inactClass;
+        formReg.classList.remove("hidden");
+        formLog.classList.add("hidden");
+      } else {
+        tabReg.className = inactClass;
+        tabLog.className = actClass;
+        formReg.classList.add("hidden");
+        formLog.classList.remove("hidden");
+      }
+    }
+
+    function quickFillPatient(id, name, phone) {
+      const nameInput = document.getElementById("regPatientName");
+      const phoneInput = document.getElementById("regPhone");
+      const idInput = document.getElementById("regPatientId");
+      if (nameInput) nameInput.value = name;
+      if (phoneInput) phoneInput.value = phone;
+      if (idInput) idInput.value = id;
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("regPatientName").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
+      const id = document.getElementById("regPatientId").value.trim().toUpperCase();
+
+      pendingAuthData = { name, phone, patientId: id };
+      showOtpStep(phone);
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const iden = document.getElementById("loginIdentifier").value.trim().toUpperCase();
+      let record = DOCTOR_PATIENT_RECORDS[iden];
+
+      if (!record) {
+        // Tìm theo số điện thoại
+        for (let key in DOCTOR_PATIENT_RECORDS) {
+          if (DOCTOR_PATIENT_RECORDS[key].phone.replace(/\s+/g, '') === iden.replace(/\s+/g, '')) {
+            record = DOCTOR_PATIENT_RECORDS[key];
+            break;
+          }
+        }
+      }
+
+      if (record) {
+        pendingAuthData = {
+          name: record.name,
+          phone: record.phone,
+          patientId: record.id
+        };
+      } else {
+        pendingAuthData = {
+          name: "Bệnh nhân " + iden,
+          phone: iden.startsWith("0") ? iden : "0912 345 678",
+          patientId: iden.startsWith("BN-") ? iden : "BN-2026-081"
+        };
+      }
+
+      showOtpStep(pendingAuthData.phone);
+    }
+
+    function showOtpStep(phone) {
+      document.getElementById("formRegister").classList.add("hidden");
+      document.getElementById("formLogin").classList.add("hidden");
+      document.getElementById("authTabsContainer").classList.add("hidden");
+      document.getElementById("stepOtp").classList.remove("hidden");
+      document.getElementById("otpDisplayPhone").textContent = phone;
+    }
+
+    let pendingSyncTimer = null;
+    let pendingSecondsLeft = 45;
+
+    function backToStep1() {
+      if (pendingSyncTimer) clearInterval(pendingSyncTimer);
+      document.getElementById("stepOtp").classList.add("hidden");
+      document.getElementById("stepPendingSync").classList.add("hidden");
+      document.getElementById("authTabsContainer").classList.remove("hidden");
+      switchAuthTab(activeAuthMode);
+    }
+
+    function autoFillOtpAndVerify() {
+      const inputs = document.querySelectorAll(".otp-input");
+      const defaultOtp = ["1", "2", "3", "4", "5", "6"];
+      inputs.forEach((inp, idx) => {
+        inp.value = defaultOtp[idx];
+      });
+      verifyOtpAndSync();
+    }
+
+    function verifyOtpAndSync() {
+      const patId = pendingAuthData.patientId || "";
+      let record = DOCTOR_PATIENT_RECORDS[patId];
+
+      if (!record && pendingAuthData.phone) {
+        for (let key in DOCTOR_PATIENT_RECORDS) {
+          if (DOCTOR_PATIENT_RECORDS[key].phone.replace(/\s+/g, '') === pendingAuthData.phone.replace(/\s+/g, '')) {
+            record = DOCTOR_PATIENT_RECORDS[key];
+            break;
+          }
+        }
+      }
+
+      // NẾU CHƯA CÓ TRONG HỒ SƠ BÁC SĨ -> HIỂN THỊ CHỜ CẬP NHẬT
+      if (!record) {
+        showPendingDoctorSync();
+        return;
+      }
+
+      completeAuthSuccess(record);
+    }
+
+    function showPendingDoctorSync() {
+      document.getElementById("stepOtp").classList.add("hidden");
+      document.getElementById("stepPendingSync").classList.remove("hidden");
+
+      const patName = pendingAuthData.name || "Bệnh nhân mới";
+      const patId = pendingAuthData.patientId || "Chưa có mã";
+      document.getElementById("pendingSyncName").textContent = patName;
+      document.getElementById("pendingSyncId").textContent = patId;
+
+      pendingSecondsLeft = 45;
+      const timerEl = document.getElementById("pendingTimerSec");
+      if (timerEl) timerEl.textContent = pendingSecondsLeft;
+
+      if (pendingSyncTimer) clearInterval(pendingSyncTimer);
+      pendingSyncTimer = setInterval(() => {
+        pendingSecondsLeft--;
+        if (timerEl) timerEl.textContent = pendingSecondsLeft;
+        if (pendingSecondsLeft <= 0) {
+          clearInterval(pendingSyncTimer);
+          retryCheckDoctorSync(true);
+        }
+      }, 1000);
+    }
+
+    function retryCheckDoctorSync(isAuto = false) {
+      const patId = pendingAuthData.patientId || "";
+      let record = DOCTOR_PATIENT_RECORDS[patId];
+      if (!record && pendingAuthData.phone) {
+        for (let key in DOCTOR_PATIENT_RECORDS) {
+          if (DOCTOR_PATIENT_RECORDS[key].phone.replace(/\s+/g, '') === pendingAuthData.phone.replace(/\s+/g, '')) {
+            record = DOCTOR_PATIENT_RECORDS[key];
+            break;
+          }
+        }
+      }
+
+      if (record) {
+        if (pendingSyncTimer) clearInterval(pendingSyncTimer);
+        document.getElementById("stepPendingSync").classList.add("hidden");
+        completeAuthSuccess(record);
+      } else {
+        if (!isAuto) {
+          alert("Bác sĩ vẫn đang hoàn tất lập phác đồ y lệnh trên cổng lâm sàng. Vui lòng chờ thêm trong giây lát!");
+        }
+        pendingSecondsLeft = 45;
+        const timerEl = document.getElementById("pendingTimerSec");
+        if (timerEl) timerEl.textContent = pendingSecondsLeft;
+      }
+    }
+
+    function simulateDoctorApproval() {
+      if (pendingSyncTimer) clearInterval(pendingSyncTimer);
+      const patId = pendingAuthData.patientId || "BN-2026-" + Math.floor(140 + Math.random() * 50);
+      const newRecord = {
+        id: patId,
+        name: pendingAuthData.name || "Bệnh nhân mới",
+        phone: pendingAuthData.phone || "0912 345 678",
+        surgery: "Phục hồi chức năng sau phẫu thuật (Chỉ định vừa cập nhật)",
+        protocolKey: "acl",
+        surgeon: "TS.BS Lê Quang Minh",
+        hospital: "Bệnh viện Chấn thương Chỉnh hình",
+        daysPostOp: 1,
+        medsCount: 3
+      };
+      DOCTOR_PATIENT_RECORDS[patId] = newRecord;
+      document.getElementById("stepPendingSync").classList.add("hidden");
+      completeAuthSuccess(newRecord);
+    }
+
+    function useSamplePatientForDemo(sampleId) {
+      if (pendingSyncTimer) clearInterval(pendingSyncTimer);
+      const rec = DOCTOR_PATIENT_RECORDS[sampleId] || DOCTOR_PATIENT_RECORDS["BN-2026-081"];
+      pendingAuthData = {
+        name: rec.name,
+        phone: rec.phone,
+        patientId: rec.id
+      };
+      document.getElementById("stepPendingSync").classList.add("hidden");
+      completeAuthSuccess(rec);
+    }
+
+    function completeAuthSuccess(record) {
+      const loggedPatient = {
+        id: record.id,
+        name: record.name,
+        phone: record.phone,
+        surgery: record.surgery,
+        protocolKey: record.protocolKey || "acl",
+        surgeon: record.surgeon,
+        hospital: record.hospital,
+        daysPostOp: record.daysPostOp || 3,
+        medsCount: record.medsCount || 3,
+        authenticatedAt: new Date().toISOString()
+      };
+
+      // Lưu vào localStorage để CareProtocol_GiaoDien.html nhận diện
+      localStorage.setItem("careprotocol_logged_patient", JSON.stringify(loggedPatient));
+      localStorage.setItem("careprotocol_active_mode", "patient");
+
+      // Cập nhật giao diện thành công
+      document.getElementById("stepOtp").classList.add("hidden");
+      document.getElementById("stepPendingSync")?.classList.add("hidden");
+      document.getElementById("stepSuccess").classList.remove("hidden");
+
+      document.getElementById("succPatientName").textContent = loggedPatient.name;
+      document.getElementById("succPatientId").textContent = loggedPatient.id;
+      document.getElementById("succSurgery").textContent = loggedPatient.surgery;
+      document.getElementById("succSurgeon").textContent = loggedPatient.surgeon;
+      document.getElementById("succMedsCount").textContent = `Đã đồng bộ ${loggedPatient.medsCount} loại thuốc từ Bác sĩ`;
+
+      // Đếm ngược 3 giây tự động chuyển về CareProtocol_GiaoDien.html
+      let count = 3;
+      const countEl = document.getElementById("countdownSec");
+      const timer = setInterval(() => {
+        count--;
+        if (countEl) countEl.textContent = count;
+        if (count <= 0) {
+          clearInterval(timer);
+          window.location.href = "CareProtocol_GiaoDien.html";
+        }
+      }, 1000);
+    }
+
+    // Auto advance cho 6 ô OTP
+    document.querySelectorAll(".otp-input").forEach((input, index, inputs) => {
+      input.addEventListener("input", () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && input.value === "" && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
