@@ -833,11 +833,20 @@ export default function PoseRehabTracker({
       setReps(0);
       setIsHandOnlyDetected(false);
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 640, height: 480, facingMode: "user" },
-        audio: false,
-      });
-      if (videoRef.current) {
+      let stream: MediaStream | null = null;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 640, height: 480, facingMode: "user" },
+          audio: false,
+        });
+      } catch (strictErr) {
+        console.warn("Strict camera constraints failed, fallback to generic video:", strictErr);
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+      }
+      if (videoRef.current && stream) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
