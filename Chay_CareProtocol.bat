@@ -1,15 +1,20 @@
 @echo off
-chcp 65001 >nul
-title CareProtocol - Máy chủ Localhost & Ví Phantom
+title CareProtocol Local Server
+cd /d "%~dp0"
 echo ======================================================================
-echo    CAREPROTOCOL - HỆ THỐNG PHỤC HỒI CHỨC NĂNG & KẾT NỐI VÍ PHANTOM
+echo    CAREPROTOCOL - HE THONG PHUC HOI CHUC NANG (LOCAL SERVER)
 echo ======================================================================
 echo.
-echo [1/2] Đang khởi chạy máy chủ cục bộ (Localhost)...
-echo [2/2] Khi chạy trên localhost, ví Phantom sẽ tự động pop-up để kết nối!
+echo Dang khoi chay may chu Cuc bo (Localhost)...
 echo.
-echo Đang mở trình duyệt tại: http://localhost:3000/CareProtocol_GiaoDien.html
-echo.
-start "" "http://localhost:3000/CareProtocol_GiaoDien.html"
-npx serve public -l 3000
+
+node -v >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [Canh bao] Khong tim thay Node.js tren may. Dang mo truc tiep file HTML...
+    start "" "%~dp0CareProtocol_GiaoDien.html"
+    pause
+    exit /b
+)
+
+node "%~dp0server.js"
 pause
