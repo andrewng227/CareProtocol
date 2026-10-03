@@ -1,0 +1,599 @@
+================================================================================
+          TÀI LIỆU HƯỚNG DẪN KHÔI PHỤC & TÁI THIẾT LẬP DỰ ÁN TỪ ĐẦU (100%)
+                     (DISASTER RECOVERY & SYSTEM REBUILD GUIDE)
+                               DỰ ÁN: CAREPROTOCOL
+================================================================================
+Tác giả / Quản lý: Andrew (CNTT / VLU-CoursePilot)
+Mục đích: Nếu gặp sự cố mất file, hỏng mã nguồn, hoặc clone sang máy tính mới,
+         tài liệu này cung cấp đầy đủ từng bước từ môi trường, cài đặt thư viện,
+         mã nguồn sửa đổi, cấu trúc tệp đến các lệnh khôi phục nguyên trạng 100%.
+Ngày ban hành: 02/10/2026
+================================================================================
+
+MỤC LỤC:
+1. YÊU CẦU MÔI TRƯỜNG & PHẦN MỀM CẦN CÓ
+2. CẤU TRÚC THƯ MỤC CHUẨN CỦA DỰ ÁN
+3. QUY TRÌNH KHÔI PHỤC TOÀN BỘ (STEP-BY-STEP RECOVERY)
+4. MÃ NGUỒN CÁC FILE CỐT LÕI (SERVER, PACKAGE, CONFIG, RUNNER)
+5. TOÀN BỘ CÁC ĐIỂM SỬA ĐỔI QUAN TRỌNG TRÊN FILE GIAO DIỆN (HTML & JS)
+6. BẢO MẬT & SAO LƯU DỰ PHÒNG TỰ ĐỘNG
+7. DANH MỤC LỆNH KHẮC PHỤC NHANH KHI GẶP LỖI
+
+================================================================================
+1. YÊU CẦU MÔI TRƯỜNG & PHẦN MỀM CẦN CÓ
+================================================================================
+- Hệ điều hành: Windows 10/11, macOS hoặc Linux.
+- Node.js: Phiên bản LTS >= 18.x (khuyên dùng Node.js 20.x).
+  Kiểm tra bằng lệnh: `node -v` và `npm -v`.
+- Trình duyệt Web: Google Chrome / Microsoft Edge / Brave (hỗ trợ WebGL và WebAssembly).
+- Tiện ích ví Web3 (Tùy chọn khi test On-Chain): Phantom Wallet cài trên Chrome.
+- Trình quản lý mã nguồn: Git.
+
+================================================================================
+2. CẤU TRÚC THƯ MỤC CHUẨN CỦA DỰ ÁN
+================================================================================
+Project-monitoring-model-0.2.0/
+└── CareProtocol-Web-main/
+    ├── CareProtocol_GiaoDien.html      # [QUAN TRỌNG] Giao diện đơn tệp tích hợp
+    ├── server.js                       # Máy chủ Local Node.js tự động mở cổng
+    ├── Chay_CareProtocol.bat           # Script 1-click chạy máy chủ trên Windows
+    ├── google_female_voice_pack.js     # Gói âm thanh giọng đọc tiếng Việt offline
+    ├── hoadonthuoc.jpg                 # Ảnh mẫu đơn thuốc thử nghiệm AI OCR
+    ├── package.json                    # Cấu hình danh mục dependencies Node.js
+    ├── package-lock.json               # Khóa phiên bản thư viện npm
+    ├── NHAT_KY_CONG_VIEC.txt           # Nhật ký tiến độ công việc
+    ├── TINH_NANG_VA_DANH_SACH_LOI.txt  # Báo cáo tính năng, danh sách lỗi & giải pháp
+    ├── HUONG_DAN_KHOI_PHUC_HE_THONG.txt# [TÀI LIỆU NÀY] Hướng dẫn cứu hộ & Rebuild
+    ├── README.md                       # Giới thiệu dự án & kiến trúc hệ thống
+    ├── app/                            # Thư mục mã nguồn Next.js (Router, Page)
+    ├── public/                         # Thư mục tài nguyên tĩnh
+    └── src/                            # Components React dự phòng
+
+================================================================================
+3. QUY TRÌNH KHÔI PHỤC TOÀN BỘ (STEP-BY-STEP RECOVERY)
+================================================================================
+
+BƯỚC 1: TẢI HOẶC LẤY LẠI MÃ NGUỒN TỪ GITHUB
+-------------------------------------------------------------------------------
+Nếu mất toàn bộ thư mục trên máy, mở terminal (PowerShell / Git Bash) chạy:
+    git clone https://github.com/andrewng227/CareProtocol.git
+    hoặc lấy lại từ repo chính:
+    git clone https://github.com/andrewng227/VLU-CoursePilot.git
+    cd CareProtocol-Web-main
+
+BƯỚC 2: CÀI ĐẶT LẠI DEPENDENCIES
+-------------------------------------------------------------------------------
+Chạy lệnh cài đặt thư viện cần thiết:
+    npm install
+(Lưu ý: Nếu mạng chậm hoặc gặp lỗi xung đột peerDependencies, chạy:
+    npm install --legacy-peer-deps)
+
+BƯỚC 3: KIỂM TRA FILE SERVER CỤC BỘ
+-------------------------------------------------------------------------------
+Đảm bảo file `server.js` và `Chay_CareProtocol.bat` có mặt tại thư mục gốc của 
+`CareProtocol-Web-main`. Nếu bị mất, sao chép lại nội dung từ Mục 4 bên dưới.
+
+BƯỚC 4: KHỞI CHẠY HỆ THỐNG
+-------------------------------------------------------------------------------
+- Cách 1 (Khuyên dùng trên Windows): Click đúp chuột vào file `Chay_CareProtocol.bat`.
+- Cách 2 (Dùng lệnh): Mở terminal tại thư mục dự án và gõ:
+    node server.js
+Trình duyệt sẽ tự động mở trang web tại địa chỉ:
+    http://localhost:3000/CareProtocol_GiaoDien.html
+
+================================================================================
+4. MÃ NGUỒN CÁC FILE CỐT LÕI (NẾU BỊ MẤT FILE THÌ TẠO LẠI BẰNG ĐOẠN NÀY)
+================================================================================
+
+[4.1] TỆP: server.js
+-------------------------------------------------------------------------------
+Nếu file `server.js` bị mất, tạo file mới tên `server.js` và dán code sau:
+
+```javascript
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+
+let PORT = parseInt(process.env.PORT || '3000', 10);
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm'
+};
+
+const server = http.createServer((req, res) => {
+  let reqPath = req.url.split('?')[0];
+  let cleanPath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
+  if (cleanPath === '.' || cleanPath === '/' || cleanPath === '\\' || cleanPath === '') {
+    cleanPath = 'CareProtocol_GiaoDien.html';
+  }
+
+  const findFile = (relPath) => {
+    let p = path.join(__dirname, relPath);
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+    p = path.join(__dirname, 'public', relPath);
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+    if (!path.extname(relPath)) {
+      p = path.join(__dirname, relPath + '.html');
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+      p = path.join(__dirname, 'public', relPath + '.html');
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+    }
+    const fallbackRoot = path.join(__dirname, 'CareProtocol_GiaoDien.html');
+    if (fs.existsSync(fallbackRoot)) return fallbackRoot;
+    const fallbackPublic = path.join(__dirname, 'public', 'CareProtocol_GiaoDien.html');
+    if (fs.existsSync(fallbackPublic)) return fallbackPublic;
+    return null;
+  };
+
+  const finalFile = findFile(cleanPath);
+  if (finalFile) {
+    const ext = path.extname(finalFile).toLowerCase();
+    res.writeHead(200, {
+      'Content-Type': MIME_TYPES[ext] || 'text/html; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+      'Referrer-Policy': 'strict-origin-when-cross-origin'
+    });
+    fs.createReadStream(finalFile).pipe(res);
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('404 Not Found: ' + reqPath);
+  }
+});
+
+let opened = false;
+function startServer(portToTry) {
+  server.listen(portToTry, () => {
+    const url = `http://localhost:${portToTry}/CareProtocol_GiaoDien.html`;
+    console.log('======================================================================');
+    console.log(`   CAREPROTOCOL - LOCAL SERVER ĐANG CHẠY`);
+    console.log(`   👉 Đường dẫn: ${url}`);
+    console.log('======================================================================');
+    console.log('💡 Đang tự động mở trình duyệt web cho anh...');
+    console.log('💡 Giữ cửa sổ này để máy chủ tiếp tục hoạt động. (Nhấn Ctrl+C để tắt)');
+
+    if (!opened) {
+      opened = true;
+      const startCmd = process.platform === 'win32' ? `start "" "${url}"` : `open "${url}"`;
+      exec(startCmd, (err) => {
+        if (err) console.log('Không thể tự mở trình duyệt, hãy click link trên thủ công nhé!');
+      });
+    }
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`⚠️ Cổng ${portToTry} đang bận, đang tự động thử cổng ${portToTry + 1}...`);
+      server.close();
+      startServer(portToTry + 1);
+    } else {
+      console.error('Lỗi khởi động máy chủ:', err);
+    }
+  });
+}
+startServer(PORT);
+```
+
+[4.2] TỆP: Chay_CareProtocol.bat
+-------------------------------------------------------------------------------
+Nếu file `Chay_CareProtocol.bat` bị mất, tạo file mới tên `Chay_CareProtocol.bat` và dán code:
+
+```bat
+@echo off
+title CareProtocol Local Server
+cd /d "%~dp0"
+echo ======================================================================
+echo    CAREPROTOCOL - HE THONG PHUC HOI CHUC NANG (LOCAL SERVER)
+echo ======================================================================
+echo.
+echo Dang khoi chay may chu Cuc bo (Localhost)...
+echo.
+
+node -v >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [Canh bao] Khong tim thay Node.js tren may. Dang mo truc tiep file HTML...
+    start "" "%~dp0CareProtocol_GiaoDien.html"
+    pause
+    exit /b
+)
+
+node "%~dp0server.js"
+pause
+```
+
+[4.3] TỆP: package.json
+-------------------------------------------------------------------------------
+```json
+{
+  "name": "careprotocol",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.14",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-phantom": "^0.9.24",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/web3.js": "^1.95.3",
+    "lucide-react": "^1.49.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.5.3",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5"
+  }
+}
+```
+
+================================================================================
+5. TOÀN BỘ CÁC ĐIỂM SỬA ĐỔI QUAN TRỌNG TRÊN FILE GIAO DIỆN (HTML & JS)
+================================================================================
+Nếu file `CareProtocol_GiaoDien.html` bị hỏng hoặc bị ghi đè nhầm về bản cũ,
+dưới đây là 4 khối mã quan trọng nhất cần chèn vào:
+
+[5.1] SỬA NÚT BẤM BÊN CỔNG BÁC SĨ (Dòng ~3720):
+- Nút "Mở Bàn Điều Khiển Camera Toàn Diện":
+    `<button onclick="openDoctorCameraModal('all')" class="..."><span class="mr-1">📹</span> Mở Bàn Điều Khiển Camera Toàn Diện</button>`
+- Nút "Xem Camera Live ->" trên 3 giường bệnh:
+    + Giường 1: `<button onclick="openDoctorCameraModal('cam1')" class="text-brand font-bold text-xs">Xem Camera Live →</button>`
+    + Giường 2: `<button onclick="openDoctorCameraModal('cam2')" class="text-brand font-bold text-xs">Xem Camera Live →</button>`
+    + Giường 3: `<button onclick="openDoctorCameraModal('cam3')" class="text-brand font-bold text-xs">Xem Camera Live →</button>`
+
+[5.2] ẨN TẠM LUỒNG BACKEND MJPEG (Dòng ~1769):
+Trong `<select id="monSourceSelect">`:
+```html
+<option value="simulation">🎬 Mô phỏng tình huống ngã (AI Demo)</option>
+<option value="webcam">📷 Webcam trực tiếp (Edge MediaPipe)</option>
+<!-- Tạm ẩn: <option value="backend">🌐 Luồng Backend MJPEG (Port 8000)</option> -->
+```
+
+[5.3] KHỐI MODAL POP-UP LIVE CAMERA CỔNG BÁC SĨ (`#docActiveCamerasModal`):
+Đặt tại đầu phần `<!-- MODALS CHO CỔNG BÁC SĨ & ĐIỀU DƯỠNG -->` (Dòng ~3833):
+Bao gồm:
+- Header với badge `3/3 Camera Online 24/7` và các nút tab chuyển view:
+  `docCamTabBtnAll`, `docCamTabBtn1`, `docCamTabBtn2`, `docCamTabBtn3`.
+- 3 Thẻ Camera với 3 Canvas:
+  + `#docLiveCamCanvas1`: Cam 01 (BN. Nguyễn Văn Hùng - Safe 96%).
+  + `#docLiveCamCanvas2`: Cam 02 (BN. Trần Thị Mai - IR Night Vision).
+  + `#docLiveCamCanvas3`: Cam 03 (BN. Lê Hoàng Nam - ROM Flexion).
+- Các nút Snapshot, Thử té ngã, Phóng to và Đóng cửa sổ (ESC).
+
+[5.4] KHỐI MODAL POP-UP SOS & CHI TIẾT SỰ CỐ:
+Đặt tại đầu phần `<!-- GLOBAL MODALS (ACCESSIBLE IN ALL MODES) -->` (Dòng ~4500):
+- Modal 1: `#monEmergencySosModal`
+  + Tiêu đề: `🚨 CUỘC GỌI KHẨN CẤP SOS (CẤP CỨU 24/7)`
+  + Hotline: TS.BS Lê Quang Minh, Khoa Phục Hồi Chức Năng (0912.345.678) và 115.
+  + Nút bấm: Gọi Bác sĩ (tel:0912345678), Gọi 115 (tel:115), Bật loa đàm thoại buồng bệnh.
+- Modal 2: `#monIncidentDetailModal`
+  + Bảng thông số: Tốc độ rơi 1.84m/s, Góc thân 12°, Tỷ lệ W/H 1.88, Bất động quá 3s.
+- JavaScript điều khiển:
+  Hàm `callEmergencySos()` mở `#monEmergencySosModal`, hàm `viewIncidentDetail()` mở
+  `#monIncidentDetailModal`.
+
+[5.5] CONTROLLER JAVASCRIPT ĐIỀU KHIỂN RENDER VÒNG LẶP CANVAS:
+- Các hàm: `openDoctorCameraModal`, `closeDoctorCameraModal`, `switchDoctorCamView`,
+  `snapshotDoctorCam`, `startDoctorLiveCameras`, `stopDoctorLiveCameras`.
+- Sử dụng `requestAnimationFrame` vẽ chuyển động khung xương mô phỏng và `cancelAnimationFrame`
+  khi đóng modal để triệt tiêu việc tiêu hao pin/CPU.
+- Bắt sự kiện phím `Escape` để đóng nhanh đồng thời cả 4 modal (`appNotificationModal`,
+  `docActiveCamerasModal`, `monEmergencySosModal`, `monIncidentDetailModal`) nếu đang mở.
+- Pop-up `#appNotificationModal` thay thế vĩnh viễn hộp thoại `alert()` thô ráp của trình duyệt.
+
+[5.6] ĐỒ HỌA MÔ PHỎNG KHUNG XƯƠNG Y KHOA NEON & VÙNG AN TOÀN TELEMETRY (Dòng ~18900-19260):
+- Nâng cấp động cơ mô phỏng `renderSimLoop()` từ người que 3 điểm sang khung xương
+  16 khớp nối y khoa (Neon Glowing Skeleton với `shadowBlur: 12` và nhân trắng rực rỡ).
+- Khóa cao độ sàn ngã an toàn: Giới hạn tọa độ Y tối đa ở mức `canvas.height * 0.54` (thay vì 0.82)
+  để người bệnh khi nằm ngã luôn cách thanh HUD đáy một khoảng đệm an toàn > 75px.
+- Đóng gói Telemetry chữ trên Canvas vào Thẻ Nổi Kính Mờ Độc Lập (`AI TELEMETRY Card`):
+  Nền `rgba(15, 23, 42, 0.88)` bo góc viền neon, tọa độ Y bị khóa `telY <= canvas.height - 75`,
+  tự đảo sang trái nếu nhân vật sát mép phải, triệt tiêu 100% hiện tượng đè lấn chữ.
+- Thêm `z-10 shadow-xl` cho thanh HUD đáy (`mon-hud-pill`).
+
+[5.7] SMART EMERGENCY FALL MODAL (POP-UP CẢNH BÁO TÉ NGÃ KHẨN CẤP) (Dòng ~1675):
+- Thay thế hoàn toàn badge đỏ nảy cũ bằng Hộp thoại Pop-up khẩn cấp bán trong suốt `#monFallBadge`:
+  + Giao diện phủ mờ `bg-slate-950/60 backdrop-blur-xs` với viền đỏ phát sáng `shadow-[0_0_50px_rgba(239,68,68,0.45)]`
+    và hiệu ứng chuyển động mượt mà `@keyframes scaleIn`.
+  + Người trực vừa nhìn thấy cảnh báo to rõ, vừa quan sát được luồng camera trực tiếp ở phía sau.
+  + Tích hợp bộ đếm lùi tự động gọi SOS cấp cứu 15 giây (`Auto-escalation Timer 15s`).
+  + Bảng thống số Snapshot tức thời: Góc thân `10° (Nằm)`, Vận tốc rơi `1.85 m/s`, Thời gian và Độ tin cậy.
+  + 2 Nút hành động: `[📞 GỌI CẤP CỨU / SOS]` và `[🛡️ Báo động giả / An toàn]`.
+- Hàm JavaScript liên kết: `triggerFallEvent()` khởi động đếm lùi (có kiểm tra khóa cờ tránh kích hoạt trùng lặp làm reset bộ đếm khi cảnh báo đang mở), `dismissAlert()` dừng bộ đếm và tắt cảnh báo.
+
+[5.8] ĐỒNG BỘ DỮ LIỆU ĐỊNH DANH BỆNH NHÂN (NGUYỄN VĂN HÙNG) & NGƯỜI THÂN (TRẦN THỊ MAI - VỢ):
+- Bệnh nhân chính mặc định toàn hệ thống:
+  + Họ và tên: `Nguyễn Văn Hùng` (58 tuổi - Nam).
+  + Mã bệnh nhân: `BN-2026-081`.
+  + Phẫu thuật: `Thay toàn bộ khớp gối phải (TKA)`.
+  + Người thân liên hệ: `Trần Thị Mai (Vợ)` - SĐT: `0988 777 666`.
+- Cơ chế tự sửa lỗi Cache LocalStorage (`initPatientAuthSystem`):
+  Nếu phát hiện localStorage lưu nhầm `BN-2026-094` hoặc `Trần Thị Mai` làm bệnh nhân chính,
+  hệ thống tự động phát hiện và chuẩn hóa lại thành Nguyễn Văn Hùng, khắc phục 100% hiện
+  tượng chớp nháy tên hoặc hiện nhầm tên vợ khi nhấn F5 tải lại trang.
+
+[5.9] THUẬT TOÁN HASH PROFILE BỆNH NHÂN & VỢ/CHỒNG NGẪU NHIÊN CỐ ĐỊNH (`ensurePatientProfile`):
+- Vị trí: Đặt tại dòng ~14835 trong `CareProtocol_GiaoDien.html`.
+- Nguyên lý hoạt động:
+  + Nhận đầu vào là đối tượng `patient`.
+  + Tạo mã băm ổn định số nguyên (`absHash`) từ chuỗi `patient.id + patient.name`.
+  + Tự động kiểm tra giới tính:
+    * Nếu bệnh nhân là Nữ: Chọn ngẫu nhiên có chủ đích người thân là Chồng `(Chồng)` từ kho `maleSpousePool`.
+    * Nếu bệnh nhân là Nam: Chọn người thân là Vợ `(Vợ)` từ kho `femaleSpousePool`.
+  + Chọn địa chỉ nhà thường trú từ kho 15 địa chỉ uy tín tại TP.HCM & Hà Nội (`addressPool`) qua bước nhảy hash.
+  + Sinh mã thẻ BHYT chuẩn quy cách: `GD4...` (Nam) hoặc `DN4...` (Nữ).
+  + Đảm bảo tính "Random nhưng Cố định": Cùng một bệnh nhân khi mở sẽ luôn nhận được đúng thông tin đó,
+    không bị nhảy hay biến đổi sang dữ liệu khác giữa các lần mở modal hay tải lại trang.
+
+[5.12] KHÔI PHỤC BẢNG GIÁM SÁT BUỒNG BỆNH 3 CAM 1 HÀNG & TRIỆT TIÊU THANH CUỘN:
+- Cấu trúc container Tab 4:
+  `<div id="docPaneMonitoring" class="hidden space-y-4 ward-safety-panel w-full max-w-[1240px] mx-auto">`
+  `<div class="wsp-container rounded-2xl p-4 sm:p-6 space-y-5 shadow-sm">`
+- Lưới 3 camera:
+  `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">`
+- Màn hình camera preview canvas: `h-36 sm:h-40` (144px - 160px).
+- Toàn bộ chip/badge buồng bệnh (`P.402 • Giường A/B`, `P.403 • Giường A`, `An Toàn`, `Đang ngủ/Nghỉ`, `Phục Hồi Nhẹ`)
+  phải có class `whitespace-nowrap` để chống rớt dòng chữ.
+- Chặn thanh cuộn ngang trong `<style>`:
+  `html, body { overflow-x: hidden !important; max-width: 100vw; }`
+  `::-webkit-scrollbar-horizontal { display: none !important; height: 0px !important; }`
+- QUY TẮC ĐỒNG BỘ STATIC BUỘC PHẢI CHẠY SAU KHI SỬA FILE GIAO DIỆN:
+  ```powershell
+  Copy-Item -Path "CareProtocol_GiaoDien.html" -Destination "public\CareProtocol_GiaoDien.html" -Force
+  Copy-Item -Path "CareProtocol_GiaoDien.html" -Destination "public\index.html" -Force
+  ```
+
+[5.13] KHÔI PHỤC THANH TAB BÁC SĨ TO RÕ & TRẢI ĐỀU 100% BẰNG KHUNG GIÁM SÁT:
+- Cấu trúc thanh Tab:
+  `<div class="border-b border-[#E7ECE9] flex items-center justify-between w-full max-w-[1240px] mx-auto overflow-hidden">`
+- Mỗi nút tab mang class `flex-1 py-3 px-2 sm:px-4 flex items-center justify-center gap-2 whitespace-nowrap text-sm sm:text-base`.
+- Cả `activeBtn` và `inactiveBtn` trong `switchDoctorSubTab(tab)` phải giữ nguyên layout `flex-1 justify-center py-3 text-sm sm:text-base` để không bị tụm lệch khi click.
+
+[5.14] KHÔI PHỤC NÚT ĐÍNH KÈM ẢNH GỌN GÀNG & BỎ NÚT NÓI TRONG CHAT AI:
+- Cấu trúc thanh Chat AI:
+  `<form onsubmit="handleChatSubmit(event)" class="mt-2 flex items-center gap-1.5 sm:gap-2">`
+  `<input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="handleChatImageSelect(event)" />`
+- Nút Ảnh kèm Popover Menu:
+  ```html
+  <div class="relative shrink-0">
+    <button type="button" id="chatPhotoMenuBtn" onclick="toggleChatPhotoMenu(event)"
+      class="px-3.5 py-3 bg-[#FAFAF9] hover:bg-teal-50 hover:text-teal-800 border border-[#E7ECE9] rounded-xl text-slate-700 text-sm flex items-center gap-1.5">
+      <span>📸</span>
+      <span class="text-xs font-semibold hidden md:inline">Ảnh</span>
+      <svg id="chatPhotoMenuArrow" class="w-3 h-3 text-slate-400">...</svg>
+    </button>
+    <div id="chatPhotoMenu" class="hidden absolute bottom-full mb-2 left-0 w-56 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-1.5 z-50">
+      <button type="button" onclick="selectChatPhotoAction('camera')">📸 Chụp ảnh trực tiếp</button>
+      <button type="button" onclick="selectChatPhotoAction('gallery')">🖼️ Tải ảnh từ thiết bị</button>
+    </div>
+  </div>
+  ```
+- JS Handlers bắt buộc:
+  + `toggleChatPhotoMenu(event)`: Bật/tắt class `hidden` và xoay mũi tên chỉ thị.
+  + `closeChatPhotoMenu()`: Đóng menu.
+  + `selectChatPhotoAction(action)`: Điều hướng đến `openCameraModal()` hoặc `chatImageInput.click()`.
+  + Lắng nghe `document.addEventListener("click")` để đóng menu khi click ra ngoài.
+
+[5.15] KHÔI PHỤC ROUTE /api/chat & KẾT NỐI AI CHAT MÁY CHỦ LOCAL:
+- Trong `server.js`: Bắt buộc phải có handler cho `reqPath === '/api/chat'`:
+  + Hỗ trợ CORS headers và phương thức OPTIONS preflight.
+  + Đọc danh sách khóa từ `.env.local` hoặc fallback key mảng `SHARED_GEMINI_KEYS`.
+  + Gửi yêu cầu đến `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=...`.
+  + Trả về JSON chuẩn `{ success: true, answer: text, sources: [] }`.
+- Trong `CareProtocol_GiaoDien.html`:
+  + Kiểm tra `ct.includes("application/json")` trước khi parse để tránh lỗi SyntaxError khi server trả về HTML.
+  + Biến fallback `GEMINI_DIRECT_KEYS` phải luôn liên kết với `SHARED_GEMINI_KEYS`.
+[5.16] KHÔI PHỤC BỘ VẼ KHUNG XƯƠNG & AI FACE TRACKING THẨM MỸ CAO (CYBERNETIC MEDICAL HUD):
+- Vị trí trong code: Dòng ~14095 - 14450 và dòng ~14970 - 15070 của `CareProtocol_GiaoDien.html`.
+- Bộ theo dõi khuôn mặt `drawFaceTrackingHUD(lm, ctx, canvasWidth, canvasHeight, theme)`:
+  + Khung ngắm 4 góc Cybernetic Corner HUD Reticle bên ngoài khuôn mặt: độ dày 2.2px, `shadowBlur: 8`, bo góc mềm mại, kích thước theo `faceRadius * 1.08`.
+  + 4 Vạch căn chỉnh tâm quang học (Subtle Reticle Ticks) ở 4 hướng trên/dưới/trái/phải với độ trong suốt 0.45.
+  + Hạt micro-node sapphire (#38bdf8) cho mắt và hạt photon trắng (#ffffff) cho mũi với quầng sáng nhẹ nhàng.
+  + Tuyệt đối không vẽ vạch cắt ngang mắt, vạch đỏ ngang môi hoặc nét đâm thẳng từ mũi qua cằm.
+  + Badge HUD nổi chống ngược chữ (`ctx.scale(-1, 1)` khi canvas flip x) với text "AI BIO-TRACKING" và chấm trạng thái phát sáng.
+- Khung xương toàn thân `drawFullSkeletonAndFace`:
+  + Gọi `drawFaceTrackingHUD`.
+  + Vẽ khung xương nền mờ (Ambient Skeleton) với đường xương đòn (Clavicle), khung xương chậu (Pelvic bar) và trục cột sống trung tâm (Central Spine Alignment) kẻ nét đứt [3, 4] laser y tế.
+  + Nút khớp năng lượng 2 lớp: vòng hào quang ngoài (`r: 6px`) + vòng khớp màu theme (`r: 3.8px`) + tâm photon trắng sáng (`r: 1.8px`).
+- Đồ họa chi vận động `drawActiveLimb`:
+  + Kiến trúc đa tầng 3 lớp: Volumetric Outer Glow (`lineWidth: 8`, `shadowBlur: 26`) + Core Laser (`lineWidth: 6`) + Radiant White Centerline (`lineWidth: 2.8`).
+  + Vòng khóa mục tiêu cho khớp chính (`r: 15px`).
+- Hàm `drawTorso`: Trục cột sống trung tâm laser nét đứt [4, 4], xương đòn và xương chậu bo tròn mềm mại.
+- Hàm `drawAngleArc`: Vòng cung đo góc kèm hiệu ứng quạt quét góc mờ (Translucent Sector Glow).
+- Vị trí `getPoseTheme` đặt tại module scope của camera để `lastPoseTheme` luôn được đồng bộ tức thời theo trạng thái bài tập (Xanh neon đạt chuẩn, Vàng chuyển động, Đỏ cảnh báo, Sky blue chuẩn bị).
+- Lệnh đồng bộ static bắt buộc:
+  ```powershell
+  Copy-Item -Path "CareProtocol_GiaoDien.html" -Destination "public\CareProtocol_GiaoDien.html" -Force
+  Copy-Item -Path "CareProtocol_GiaoDien.html" -Destination "public\index.html" -Force
+  ```
+
+[5.17] KHÔI PHỤC BỘ KIỂM CHUẨN ĐỘNG HỌC BÁM SÁT BÀI TẬP MẪU & KHÓA ĐẾM REP SAI:
+- Vị trí trong code:
+  + Dòng ~14475 - 14930 và dòng ~11925 - 11940 của `CareProtocol_GiaoDien.html`.
+- Thuật toán kiểm chuẩn động học `validateExerciseForm(mode, lm, sm, activeSide, p)`:
+  + Phác đồ Gối (`knee`): Ràng buộc hai tay phải buông xuôi (cổ tay không vượt qua vai), thân người không cúi gập sâu (<58°), cẳng chân gập duỗi thực sự (không nâng thẳng cả chân >155°).
+  + Phác đồ Vai/Đột quỵ (`arm`): Bắt buộc khuỷu tay duỗi thẳng/mở rộng (>=92°), cẳng tay và bàn tay nâng ngang vai, cột sống không nghiêng vẹo, hai chân đứng/ngồi yên.
+  + Phác đồ Sinh mổ (`csection`): Ngồi thẳng lưng, nhấc gối nhẹ nhàng, không cúi gập thân trên.
+  + Phác đồ Mổ nội soi (`ankle`): Đầu gối giữ yên trên mặt phẳng, chỉ cử động khớp cổ chân.
+  + Phác đồ Cột sống (`spine`): Hai vai cân bằng ngang nhau, trục sống lưng thẳng tắp.
+- Cơ chế khóa đếm rep và cảnh báo trực diện:
+  + Khi `!formCheck.isValid`: chuyển trạng thái sang `wrong`, theme đỏ `#ef4444`, `repState = "idle"`, hủy bỏ hoàn toàn việc tiến tới `peak_reached`.
+  + Chốt chặn an toàn trong `simulateRep()`: từ chối tăng rep nếu `lastPoseTheme.status === "wrong"`.
+  + Hàm `drawModelViolationHUD`: vẽ viền đỏ Cybernetic 4 góc, vòng ngắm laser đỏ tại khớp bị vi phạm kèm dấu `!`, banner cảnh báo trên canvas và giọng nói AI Huấn Luyện Viên nhắc nhở.
+- Đồng bộ hộp động tác mẫu PIP (`#pip-action-box`):
+  + Tự động hiển thị và đồng bộ bài tập mẫu 60 FPS khi bật camera và khi đổi bài tập.
+  + Huy hiệu `pipConformityBadge`: "Khớp mẫu AI ✓" hoặc "Lệch bài mẫu ⚠️".
+- Lệnh đồng bộ static bắt buộc:
+  ```powershell
+  Copy-Item -Path "CareProtocol_GiaoDien.html" -Destination "public\CareProtocol_GiaoDien.html" -Force
+  Copy-Item -Path "CareProtocol_GiaoDien.html" -Destination "public\index.html" -Force
+  ```
+
+[5.18] KHÔI PHỤC HỆ THỐNG ĐA HIỆP (MULTI-SET), ĐẾM NGƯỢC NGHỈ 60S & KHÓA KÝ ON-CHAIN:
+- Vị trí trong code:
+  + Dòng ~1597 - 1635: Khối HTML `#setRestOverlay` (lớp phủ đếm ngược nghỉ ngơi 60s) và thẻ hiển thị `Hiệp X/Y`.
+  + Dòng ~6000: Khai báo biến `currentSet = 1, isResting = false, restSecondsLeft = 60, restInterval = null;`.
+  + Dòng ~11425: `selectProtocol(key)` khởi tạo lại số hiệp, reset biến nghỉ, vô hiệu hóa nút ký on-chain.
+  + Dòng ~11975 - 12050: Hàm `startSetRest(seconds)`, `skipSetRest()`, và `simulateRep()` kiểm soát tiến trình đa hiệp.
+  + Dòng ~14970: Chốt chặn an toàn `if (isResting) { return; }` trong `pose.onResults` chống đếm rep ảo lúc nghỉ.
+- Cấu trúc các hàm khôi phục:
+  ```javascript
+  // 1. Kích hoạt đếm ngược nghỉ giữa hiệp 60s
+  function startSetRest(seconds = 60) {
+    isResting = true; restSecondsLeft = seconds;
+    document.getElementById("setRestOverlay").classList.remove("hidden");
+    // Chạy setInterval giảm dần restSecondsLeft, vẽ vòng tròn SVG và loa nhắc nhở
+  }
+
+  // 2. Chuyển hiệp mới khi hết giờ nghỉ hoặc người bệnh bấm bỏ qua
+  function skipSetRest() {
+    isResting = false; currentSet++; repCount = 0;
+    document.getElementById("setRestOverlay").classList.add("hidden");
+  }
+
+  // 3. Máy trạng thái simulateRep: Chỉ cho ký on-chain khi currentSet >= targetSets
+  function simulateRep() {
+    if (isDone || isResting) return;
+    repCount++;
+    if (repCount >= targetReps) {
+      if (currentSet < targetSets) {
+        startSetRest(60); // Chưa hết số hiệp -> nghỉ 60s
+      } else {
+        isDone = true; // ĐÃ XONG TOÀN BỘ SỐ HIỆP -> MỞ KHÓA NÚT XÁC NHẬN ON-CHAIN
+        btnSign.disabled = false;
+        btnSign.innerText = `Xác nhận đủ ${targetSets} hiệp on-chain ✓`;
+      }
+    }
+  }
+  ```
+
+[5.19] KHÔI PHỤC POP-UP XÁC NHẬN ĐĂNG XUẤT CHUYÊN NGHIỆP (`#logoutConfirmModal`):
+- Vị trí trong code:
+  + Dòng ~5508: Khối HTML `#logoutConfirmModal` (modal card bo góc 3xl, icon 🚪 màu đỏ, nút Hủy Bỏ và nút Đăng Xuất).
+  + Dòng ~16664: Thay thế `confirm()` mặc định bằng `openLogoutConfirmModal()`, `closeLogoutConfirmModal()` và `confirmExecuteLogout()`.
+- Cấu trúc các hàm khôi phục:
+  ```javascript
+  function openLogoutConfirmModal() {
+    const modal = document.getElementById("logoutConfirmModal");
+    const nameEl = document.getElementById("logoutModalPatientName");
+    const idEl = document.getElementById("logoutModalPatientId");
+    if (nameEl) nameEl.innerText = (currentPatient && currentPatient.name) || "Hồ sơ bệnh nhân";
+    if (idEl) idEl.innerText = `Mã BN: ${(currentPatient && currentPatient.id) || "BN-2026-081"}`;
+    if (modal) modal.classList.remove("hidden");
+  }
+
+  function closeLogoutConfirmModal() {
+    const modal = document.getElementById("logoutConfirmModal");
+    if (modal) modal.classList.add("hidden");
+  }
+
+  function logoutPatient() {
+    openLogoutConfirmModal();
+  }
+
+  function confirmExecuteLogout() {
+    closeLogoutConfirmModal();
+    localStorage.removeItem("careprotocol_logged_patient");
+    // Reset về GUEST, đổi tab về login, hiển thị toast thông báo
+  }
+  ```
+
+[5.20] KHÔI PHỤC Ô TRA CỨU MÃ BỆNH NHÂN & TỰ ĐỘNG ĐIỀN HỒ SƠ 1-CHẠM:
+- Vị trí trong code:
+  + Dòng ~5420: Khối HTML `#regLookupPatId`, `#btnRegClearLookup`, `#regLookupFeedback` ở đầu tab Đăng Ký Mới.
+  + Dòng ~16540: Các hàm JavaScript `lookupPatientData()`, `fillPatientIdCode()`, `clearLookupPatientData()`, `handlePatientIdLookupInput()` và hàm submit `handlePatientRegisterSubmit()`.
+- Cấu trúc các hàm khôi phục:
+  ```javascript
+  function lookupPatientData(isTyping = false) {
+    const inputEl = document.getElementById("regLookupPatId");
+    const cleanInput = inputEl.value.trim().toLowerCase();
+    const found = DOCTOR_PATIENTS.find(p => p.id.toLowerCase() === cleanInput || p.id.toLowerCase().endsWith(cleanInput));
+    if (found) {
+      // Tự động điền: Họ tên, Số điện thoại, Tuổi, Giới tính, BHYT, Loại phẫu thuật, Bệnh viện, Bác sĩ, Ngày mổ
+      // Hiển thị banner xanh báo thành công
+    } else {
+      // Hiển thị banner hổ phách: Chưa tìm thấy mã hoặc đang chờ cập nhật
+    }
+  }
+  ```
+- Lưu ý: Thanh gợi ý mã mẫu bên dưới ô tra cứu đã được ẩn đi để giữ giao diện sạch đẹp, tinh tế.
+
+- [ĐỒNG BỘ BÁC SĨ PHỤ TRÁCH & XUẤT BÁO CÁO Y KHOA TẢI VỀ]:
+  Khối Bác sĩ phụ trách trong Modal Video (`#videoDoctorCard`) và huy hiệu `#badgeDoctor` có thể click để mở Modal Báo Cáo Bác Sĩ (`#doctorReportModal`).
+  Hệ thống cung cấp nút "Tải Báo Cáo (.HTML / PDF)" tải trực tiếp file báo cáo y khoa độc lập về máy tính/điện thoại. Tên bác sĩ phụ trách luôn tự động cập nhật theo `currentPatient.surgeon` của bệnh nhân đăng nhập.
+
+- [ENGINE ĐỊNH GIÁ VIỆN PHÍ & BHYT THEO GIÁ THỊ TRƯỜNG BỆNH LÝ]:
+  Hệ thống sở hữu `CLINICAL_MARKET_FEES` và hàm `generateHospitalFeeForPatient()` tự động sinh ngẫu nhiên số tiền viện phí trong dải giá thị trường thực tế của từng ca bệnh tại Việt Nam (TKA 64-82tr, ACL 30-42tr, Cột sống 46-64tr, Tim mạch 88-128tr, Sinh mổ 16-25tr...).
+  Dữ liệu viện phí đảm bảo cân đối tuyệt đối 100% giữa Tổng chi phí, BHYT chi trả, Tiền tạm ứng và Số tiền cần thanh toán/hoàn ứng, đồng bộ trên 4 cột tài chính, 14 mục chi phí và Bảng kê viện phí PDF.
+
+- [QUY CHUẨN NGHIỆM THU BẮT BUỘC THEO YÊU CẦU CỦA ANH ANDREW]:
+  Sau khi hoàn tất bất kỳ lần chỉnh sửa/fix nào, trợ lý phải chủ động hỏi: "anh đã ưng chưa"
+  và ghi lại đầy đủ nhật ký vào cả 3 file txt của hệ thống.
+
+================================================================================
+6. BẢO MẬT & SAO LƯU DỰ PHÒNG TỰ ĐỘNG
+================================================================================
+Để đề phòng mất mát dữ liệu trong tương lai, anh nên thực hiện:
+
+1. Tạo bản sao lưu (Backup) nhanh bằng dòng lệnh PowerShell:
+   ```powershell
+   Copy-Item "CareProtocol_GiaoDien.html" "CareProtocol_GiaoDien.backup_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
+   ```
+
+2. Đẩy các bản sửa đổi lên Git định kỳ:
+   ```bash
+   git add .
+   git commit -m "backup: luu tru toan bo tinh nang va sua loi he thong"
+   git push origin main
+   ```
+
+3. Nếu có chỉnh sửa nhầm và muốn khôi phục về bản commit gần nhất của Git:
+   ```bash
+   git checkout -- CareProtocol_GiaoDien.html
+   ```
+
+================================================================================
+7. DANH MỤC LỆNH KHẮC PHỤC NHANH KHI GẶP LỖI
+================================================================================
+
+- Lỗi: `EADDRINUSE: address already in use :::3000` (Cổng 3000 bị chiếm)
+  Khắc phục: Hệ thống trong `server.js` đã tự động tìm cổng 3001, 3002 tiếp theo.
+  Hoặc có thể tắt tiến trình đang chiếm cổng:
+  PowerShell: `Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess | Stop-Process -Force`
+
+- Lỗi: Trình duyệt không xin quyền Camera:
+  Khắc phục: Luôn chạy qua `http://localhost:3000` (dùng `Chay_CareProtocol.bat`), 
+  không nhấp đúp trực tiếp mở dạng `file:///C:/...`.
+
+- Lỗi: Mất gói giọng nói AI tiếng Việt:
+  Khắc phục: Đảm bảo file `google_female_voice_pack.js` cùng thư mục với HTML.
+  Nếu thiếu, Web Speech API sẽ tự động dùng giọng tiếng Việt mặc định của hệ điều hành.
+
+================================================================================
+BẢN QUYỀN & CHỦ QUYỀN DỰ ÁN:
+CareProtocol x Project Monitoring Model 0.2.0 - Phát triển bởi Andrew.
+Mọi tài liệu và file cấu hình trên đảm bảo hệ thống có thể tái thiết lập 100%
+trong vòng 3 phút tại bất kỳ máy tính mới nào.
+================================================================================

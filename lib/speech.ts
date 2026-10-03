@@ -53,7 +53,22 @@ class SpeechCoach {
 
     this.lastSpokenTime = now;
 
-    // Phát âm thanh qua API route Text-to-Speech (đảm bảo 100% nói tiếng Việt chuẩn trên mọi thiết bị)
+    // 1. Ưu tiên cao nhất: Phát âm thanh chất lượng Studio từ Voice Pack (nếu có sẵn)
+    if (typeof window !== "undefined" && (window as any).GOOGLE_FEMALE_VOICE_PACK) {
+      const pack = (window as any).GOOGLE_FEMALE_VOICE_PACK;
+      const norm = text.replace(/[.!?,]+$/g, '').trim();
+      const b64 = pack[text] || pack[norm];
+      if (b64) {
+        try {
+          const audio = new Audio(b64);
+          this.currentAudio = audio;
+          audio.play().catch(() => {});
+          return;
+        } catch (e) {}
+      }
+    }
+
+    // 2. Phát âm thanh qua API route Text-to-Speech (đảm bảo 100% nói tiếng Việt chuẩn trên mọi thiết bị)
     const audioUrl = `/api/tts?text=${encodeURIComponent(text)}&lang=${langCode}`;
     const audio = new Audio(audioUrl);
     this.currentAudio = audio;
@@ -65,6 +80,17 @@ class SpeechCoach {
         window.speechSynthesis.cancel();
         const ut = new SpeechSynthesisUtterance(text);
         ut.lang = this.currentLang === "vi" ? "vi-VN" : "en-US";
+        ut.rate = 0.90;
+        ut.pitch = 1.04;
+        const voices = window.speechSynthesis.getVoices() || [];
+        const femaleVi = voices.find(v => {
+          const n = (v.name || "").toLowerCase();
+          const l = (v.lang || "").toLowerCase();
+          const isVi = l.startsWith("vi") || l.includes("vn");
+          const isMale = n.includes("male") || n.includes(" an ") || n.includes("microsoft an") || n.includes(" nam") || n.includes("david");
+          return isVi && !isMale;
+        });
+        if (femaleVi) ut.voice = femaleVi;
         window.speechSynthesis.speak(ut);
       }
     });

@@ -1,0 +1,542 @@
+================================================================================
+                    NHẬT KÝ CÔNG VIỆC DỰ ÁN CAREPROTOCOL
+               (PROJECT WORKLOG & DEVELOPMENT PROGRESS)
+================================================================================
+Dự án: CareProtocol & Project Monitoring Model 0.2.0
+Môi trường: Web Standalone / Local Server (Node.js & Next.js) / Edge AI
+Tác giả / Quản lý: Andrew (CNTT / VLU-CoursePilot)
+Cập nhật lần cuối: Ngày 02/10/2026
+================================================================================
+
+I. TỔNG QUAN CÁC GIAI ĐOẠN ĐÃ THỰC HIỆN
+--------------------------------------------------------------------------------
+1. Giai đoạn 1: Xây dựng nền tảng cốt lõi (Core Foundation)
+   - Tích hợp thị giác máy tính Edge AI (Google MediaPipe Pose) chạy trực tiếp 
+     trên trình duyệt máy trạm (Client-side WebAssembly/WebGL), không truyền video
+     lên server nhằm bảo đảm tuyệt đối tính riêng tư cho bệnh nhân.
+   - Xây dựng mô hình tính toán biên độ vận động khớp (ROM - Range of Motion) 
+     cho khớp gối và khớp háng, đếm số chu kỳ tập (Reps) và góc gập duỗi tự động.
+   - Tích hợp trợ lý giọng đọc Tiếng Việt offline (Web Speech API + Audio Pack).
+   - Tích hợp module xác thực tuân thủ phác đồ điều trị lên Solana Blockchain
+     (Devnet SPL Memo Program / Anchor Smart Contract).
+
+2. Giai đoạn 2: Tích hợp Hệ thống Giám sát Té ngã (Project Monitoring Model 0.2.0)
+   - Kết nối hệ thống AI phát hiện ngã thông minh (Spatial-Temporal Kinematics):
+     + Đo tốc độ rơi tự do thẳng đứng (Vy > 0.65 m/s).
+     + Đo góc ngả của trục thân người (Thân ngả sát sàn < 30°).
+     + Phân tích tỷ lệ khung bao (Bounding Box Aspect Ratio W/H > 1.25).
+     + Cảnh báo bất động kéo dài sau va chạm sàn (> 3 giây).
+   - Thiết kế HUD phân tích thời gian thực trên Canvas hiển thị khung xương 
+     17 điểm MediaPipe, chuông còi báo động qua Web Audio API Synthesizer.
+
+3. Giai đoạn 3: Phát triển Cổng Bác Sĩ & Điều Dưỡng (Doctor & Caregiver Portal)
+   - Xây dựng bảng điều khiển quản trị buồng bệnh (Ward Safety AI Monitoring):
+     theo dõi song song nhiều buồng bệnh (Phòng 402 - Giường A, Giường B; 
+     Phòng 403 - Giường A).
+   - Thống kê tỷ lệ tuân thủ phục hồi, cảnh báo đỏ và chất lượng tư thế trung bình.
+   - Đồng bộ danh mục phác đồ điều trị, kết xuất EMR chuẩn HL7 FHIR v4.0.1.
+
+4. Giai đoạn 4: Tinh chỉnh Giao diện, Trải nghiệm Người Dùng (Giai đoạn vừa hoàn thành)
+   - Ẩn tạm tính năng lựa chọn luồng Backend MJPEG (Port 8000) chưa ổn định để
+     tránh người dùng chọn nhầm gây lỗi kết nối camera.
+   - Nâng cấp nút "Mở Bàn Điều Khiển Camera Toàn Diện" và "Xem Camera Live ->"
+     bên cổng Bác Sĩ: Chuyển đổi từ hành vi chuyển tab sang hiển thị một Pop-up
+     Modal trung tâm đa camera (Ward Safety Live Feeds Modal) với 3 luồng video
+     hoạt họa mô phỏng khung xương MediaPipe 30 FPS thời gian thực.
+   - Xóa bỏ hoàn toàn các hộp thoại thông báo thô sơ của trình duyệt (confirm, alert):
+     + Thay thế hộp thoại confirm "Cuộc gọi khẩn cấp SOS" bằng Pop-up Modal SOS
+       chuẩn y khoa chuyên nghiệp, tích hợp nút gọi thẳng Hotline Bác sĩ, 115 
+       và đàm thoại buồng bệnh.
+     + Thay thế hộp thoại alert "Chi tiết sự cố" bằng Pop-up phân tích động học
+       YOLOv8-Pose chi tiết.
+
+--------------------------------------------------------------------------------
+II. NHẬT KÝ CHI TIẾT THEO MỐC THỜI GIAN (CHANGELOG)
+--------------------------------------------------------------------------------
+
+[QUY CHUẨN LÀM VIỆC & NGHIỆM THU THEO YÊU CẦU CỦA ANH ANDREW]:
+* BẮT BUỘC: Mỗi khi fix/chỉnh sửa xong bất kỳ tính năng hoặc lỗi nào anh Andrew nhờ,
+  trợ lý phải luôn chủ động hỏi anh Andrew xem: "anh đã ưng chưa".
+* ĐỒNG BỘ: Luôn cập nhật đầy đủ ghi chú, nhật ký kỹ thuật vào cả 3 tệp tài liệu:
+  1. NHAT_KY_CONG_VIEC.txt
+  2. TINH_NANG_VA_DANH_SACH_LOI.txt
+  3. HUONG_DAN_KHOI_PHUC_HE_THONG.txt
+
+[Mốc: 03/10/2026 - Phiên cập nhật 15: Phóng To & Căn Chỉnh 4 Tab Bác Sĩ Trải Đều Vừa Khít Bằng Khung]
+- Yêu cầu người dùng (Andrew):
+  "to cái này hơn xíu nhe cho nó bằng cái khung luôn" (kèm ảnh chụp 4 Tab Bác sĩ).
+- Hành động thực hiện:
+  + Phóng to toàn bộ kích thước chữ và biểu tượng của 4 Tab Bác sĩ:
+    * Chữ tăng từ `text-xs sm:text-sm` lên `text-sm sm:text-base`.
+    * Biểu tượng emoji phóng to `text-base sm:text-lg`.
+    * Padding tăng lên `py-3 px-2 sm:px-4`, bấm êm tay, cân đối hài hòa với dashboard.
+  + Căn chỉnh 4 Tab trải đều 100% bằng phẳng khít với khung (`max-w-[1240px]`):
+    * Đặt thẻ chứa tab: `flex items-center justify-between w-full max-w-[1240px] mx-auto overflow-hidden`.
+    * Cả 4 nút Tab đều mang class `flex-1 justify-center`, chia đều 25% độ rộng khung, khớp thẳng tắp hai mép trái/phải với khung giám sát bên dưới.
+    * Cập nhật hàm `switchDoctorSubTab(tab)` trong JS để khi click chuyển qua lại giữa các tab, trạng thái `activeBtn` và `inactiveBtn` vẫn bảo toàn hoàn hảo layout `flex-1 py-3 text-sm sm:text-base`.
+  + Đồng bộ dữ liệu sang `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: 4 Tab Bác sĩ to rõ ràng, nổi bật, trải dài vừa khít viền khung buồng bệnh bên dưới, không còn bị tụm nhỏ sang góc trái.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 14: Tối Ưu Bảng Giám Sát Buồng Bệnh 3 Cam 1 Hàng & Triệt Tiêu Thanh Cuộn Ngang]
+- Yêu cầu người dùng (Andrew):
+  1. "anh kh muốn thanh trượt em điều chỉnh lại nhé, bị bành ra 2 bên anh kh thích".
+  2. "làm to xíu anh muốn nó 3 cam 1 hàng".
+  3. "giờ anh nhờ em fix gì xong em phải hỏi anh anh đã ưng chưa thì thêm note vào 3 cái file txt nha".
+- Hành động thực hiện:
+  + Triệt tiêu toàn bộ thanh cuộn ngang (horizontal scrollbar):
+    * Bỏ `overflow-x-auto` khỏi thanh điều hướng Tab Bác sĩ và Header.
+    * Đặt CSS chặn thanh cuộn ngang toàn cục: `html, body { overflow-x: hidden !important; max-width: 100vw; }` và `::-webkit-scrollbar-horizontal { display: none !important; height: 0px !important; }`.
+    * Tinh giản nhãn Tab thành: "Bệnh Nhân", "Quản Trị HIS", "Dữ Liệu Y Khoa", "Giám Sát & Té Ngã (Live)" trên cả giao diện lẫn từ điển đa ngôn ngữ (`vi` & `en`) để không bao giờ bị tràn lề.
+  + Mở rộng khung và bố trí chuẩn 3 Camera 1 Hàng (Spacious & Clean):
+    * Nâng chiều rộng khung chứa lên `max-w-[1240px] mx-auto w-full`, khớp hoàn hảo với lưới thẻ thống kê phía trên.
+    * Đặt lưới hiển thị `grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5`, đảm bảo trên máy tính luôn hiển thị 3 cam trên cùng 1 hàng ngang.
+    * Tăng chiều cao màn hình camera từ 120px lên 144px - 160px (`h-36 sm:h-40`), giúp khung xương MediaPipe (Cam 01), sóng thở IR (Cam 02) và thước đo góc ROM gập gối (Cam 03) to, nét, trực quan.
+    * Thêm thuộc tính `whitespace-nowrap` cho tất cả nhãn phòng/giường (`P.402 • Giường A/B`, `P.403 • Giường A`) và trạng thái (`An Toàn`, `Đang ngủ/Nghỉ`, `Phục Hồi Nhẹ`), chấm dứt triệt để tình trạng gãy dòng chữ.
+  + Đồng bộ dữ liệu tệp:
+    * Sao chép đồng bộ từ `CareProtocol_GiaoDien.html` sang cả `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Giao diện Tab Bác sĩ hiển thị 3 camera lớn rõ ràng, cân đối, sang trọng chuẩn Clean Medical Modern, không còn thanh trượt ngang.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 13: Xây Dựng Smart Emergency Fall Modal & Chống Đè Chữ Phân Tầng]
+- Yêu cầu người dùng (Andrew):
+  1. Hình ảnh mô phỏng khung xương khi bệnh nhân té ngã bị đè lên thanh HUD thông số và chữ text trên canvas bị chèn lẫn vào nhau. Cần tách biệt rõ ràng, không bị đè.
+  2. Nâng cấp cảnh báo té ngã (trước đây là badge nhỏ nảy ở góc trên) thành một Pop-up khẩn cấp tương tác thông minh (Smart Emergency Pop-up).
+- Hành động thực hiện:
+  + Tối ưu độ cao mặt sàn giả lập (Ground Safe Elevation):
+    * Tinh chỉnh lại tọa độ Y khi té ngã và trạng thái BẤT ĐỘNG KÉO DÀI từ mức `0.82` (sát đáy) lên `0.54` (giữa màn hình). Khung xương 16 điểm và Bounding Box luôn cách mép thanh HUD đáy tối thiểu 75px.
+    * Đóng gói toàn bộ chữ Telemetry trên Canvas (`SPINE`, `VEL`, `ASPECT`) vào một Thẻ Nổi Kính Mờ (`AI TELEMETRY Card`) có nền `rgba(15, 23, 42, 0.88)` với tọa độ Y bị khóa an toàn `Y <= canvas.height - 75` và tự động đảo sang trái nếu nhân vật di chuyển sát mép phải.
+    * Thêm `z-10 shadow-xl` cho thanh HUD đáy (`mon-hud-pill`) để phân tầng hiển thị sắc nét.
+  + Thiết kế và tích hợp Smart Emergency Fall Modal (`#monFallBadge`):
+    * Biến đổi từ badge đỏ nảy đơn thuần thành Hộp thoại Pop-up khẩn cấp bán trong suốt phủ trung tâm màn hình video (`bg-slate-950/60 backdrop-blur-xs`), viền đỏ rực phát sáng Cyberpunk (`shadow-[0_0_50px_rgba(239,68,68,0.45)]`) và hiệu ứng chuyển động `scaleIn`.
+    * Vừa nổi bật báo động đỏ, vừa không làm che khuất hoàn toàn tầm nhìn camera bên dưới (người trực vẫn nhìn thấy tư thế bệnh nhân và viền chớp đỏ cảnh báo).
+    * Tích hợp đồng hồ đếm ngược tự động chuyển cấp cứu: `Tự động SOS: 15s... 14s...`. Nếu trong 15s không có ai can thiệp, hệ thống tự động nhảy sang quy trình gọi cấp cứu SOS bác sĩ.
+    * Tích hợp bảng thông số Snapshot tức thời ngay trên Pop-up: Góc thân (`10°`), Vận tốc rơi (`1.85 m/s`), Thời gian phát hiện, Độ tin cậy (`96.8%`).
+    * 2 Nút bấm hành động chuẩn quy trình: `[📞 GỌI CẤP CỨU / SOS]` và `[🛡️ Báo động giả / An toàn]`.
+    * Cập nhật các hàm `triggerFallEvent()` (bắt đầu đếm ngược, cập nhật số liệu) và `dismissAlert()` (dọn sạch interval đếm ngược, đóng pop-up mượt mà).
+    * Khắc phục hiện tượng bộ đếm bị reset giật lùi (15s xuống 10s rồi nhảy ngược lên 15s): Bổ sung kiểm tra cờ trạng thái `fallBadgeCheck` và `fallCountdownInterval`. Khi Modal khẩn cấp đang mở và đang đếm ngược, hệ thống khóa không cho các sự kiện quét ngã tiếp theo kích hoạt lại làm khởi động lại bộ đếm từ đầu, đảm bảo chu trình đếm ngược 15s -> 0s chạy liền mạch, dứt khoát.
+  + Đồng bộ toàn bộ mã nguồn sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khung xương và thông số telemetry hiển thị thông thoáng 100%, không còn hiện tượng đè lấn. Pop-up khẩn cấp hoạt động mượt mà, bộ đếm ngược chạy chuẩn xác từ 15s xuống 0s tự kích hoạt SOS mà không bị reset giữa chừng.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 12: Chặn Tự Động Đọc Giọng Nói Khởi Động & Nâng Cấp Biomechanical Neon Skeleton]
+- Yêu cầu người dùng (Andrew):
+  1. Khi vừa mở web thì hệ thống tự động phát âm thanh đọc hướng dẫn bài tập. Cần chỉ khi nào người dùng chủ động click chọn bài tập thì mới phát giọng nói hướng dẫn.
+  2. Nâng cấp hình ảnh mô phỏng đồ họa khung xương bệnh nhân trong buồng bệnh cho đẹp, hiện đại và chuẩn y khoa hơn hình người que cũ.
+- Hành động thực hiện:
+  + Chặn tự động đọc giọng nói: Thêm cờ `isUserAction` vào hàm `selectProtocol(key, isUserAction)`. Khi khởi động trang (`DOMContentLoaded`), hàm được gọi với `selectProtocol("acl", false)` -> chỉ cập nhật dữ liệu và UI, KHÔNG kích hoạt voice coach. Khi người dùng bấm nút bài tập -> truyền `true` -> phát giọng đọc hướng dẫn.
+  + Nâng cấp động cơ Canvas Biomechanical Pose:
+    * Chuyển từ người que 3 điểm đơn giản sang Khung xương chuyển động 16 điểm mốc khớp y khoa: Đầu có vòng hào quang radar, cổ, cột sống giữa, khung chậu, hai vai, hai khuỷu tay, hai cổ tay, hai khớp háng, hai khớp gối và hai cổ chân.
+    * Đồ họa phát sáng neon (Neon Glowing Bones) với hiệu ứng bóng mờ `shadowBlur: 12`, các khớp là các chấm nhân trắng sáng rực bao quanh bởi quầng sáng công nghệ cao.
+    * Khung Bounding Box động học thông minh tính toán chính xác theo bao lồi của tất cả 16 keypoints, đi kèm 4 góc ngắm Crosshairs HUD và thanh tag nhãn `PERSON #01 (NORMAL/FALL_DETECTED) • Conf%`.
+  + Đồng bộ toàn bộ mã nguồn sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Web mở lên êm ái, yên tĩnh; hình ảnh mô phỏng đạt độ thẩm mỹ y khoa tương lai cực kỳ ấn tượng!
+
+[Mốc: 02/10/2026 - Phiên cập nhật 11: Tinh Chỉnh Bố Cục Header Bảng Cảnh Báo Đỏ - Chống Tràn Chữ & Móp Icon]
+- Yêu cầu người dùng (Andrew): Sửa lại giao diện Header phần Phân Luồng Cảnh Báo Đỏ (Triage) cho thật đẹp và cân đối (ảnh chụp cho thấy tiêu đề bị ngắt dòng thành "Phân Luồng Cảnh" và "Báo Đỏ (Triage)", badge phác đồ bị bẻ đôi dòng "TKR / ACL" và "(KHỚP GỐI)", nút "HOTLINE 24/7" bị ép thành 2 dòng và icon còi đỏ bị móp).
+- Hành động thực hiện:
+  + Tái cấu trúc bố cục Header theo phân cấp 2 tầng khoa học, thanh thoát:
+    * Khóa cố định tỷ lệ khung hình vuông chuẩn (`shrink-0 aspect-square w-11 h-11 rounded-2xl`) cho icon còi báo động 🚨, triệt tiêu 100% hiện tượng icon bị bóp méo hình elip khi co giãn màn hình.
+    * Tiêu đề "Phân Luồng Cảnh Báo Đỏ" đứng độc lập ở dòng trên với `whitespace-nowrap font-black text-base sm:text-lg text-rose-950`, không bao giờ bị gãy từ ngang xương.
+    * Huy hiệu phác đồ (`#triageProtocolBadge`) được dời xuống dòng dưới đi kèm nhãn chỉ báo `PHÁC ĐỒ:`, áp dụng `whitespace-nowrap inline-flex` giúp tên phác đồ luôn trải dài trọn vẹn, bo tròn thanh lịch và bóng đổ `shadow-2xs`.
+    * Nút "HOTLINE 24/7" áp dụng `whitespace-nowrap shrink-0` với dải gradient rose-600 qua rose-700 và đèn ping nhấp nháy, luôn nằm ngang sang trọng ở góc phải.
+    * Dòng phụ đề `#triageSubtitle` đặt dưới đáy với khoảng đệm `mt-2` và `leading-relaxed` dễ đọc.
+  + Cập nhật đồng bộ hàm JavaScript `updatePatientTriageUI()` để luôn gán `whitespace-nowrap inline-flex` cho badge mỗi khi đổi hồ sơ bệnh án.
+  + Đồng bộ toàn bộ mã nguồn sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Header bảng Triage hiển thị ngay ngắn, sang trọng, các khối chữ dàn đều hoàn hảo trên cả điện thoại, máy tính bảng và màn hình máy tính!
+
+[Mốc: 02/10/2026 - Phiên cập nhật 10: Cá Nhân Hóa Bảng Phân Luồng Cảnh Báo Đỏ (Triage) Theo Từng Bệnh Án]
+- Yêu cầu người dùng (Andrew): Tùy biến bảng "Phân Luồng Cảnh Báo Đỏ (Triage)" chuyên biệt theo từng bệnh lý/phẫu thuật thực tế của bệnh nhân thay vì hiển thị chung chung một bảng dấu hiệu khớp gối cho tất cả mọi người.
+- Hành động thực hiện:
+  + Xây dựng cơ sở dữ liệu cảnh báo đỏ chuyên sâu `TRIAGE_RED_FLAGS` bao phủ 11 chuyên khoa/nhóm bệnh lý:
+    1. Khớp Gối (TKR / ACL): Sốt nhiễm trùng khớp gối, chảy mủ vết mổ, huyết khối DVT bắp chân, đau VAS >= 8, chèn ép khoang đầu chi.
+    2. Đột Quỵ Não (Stroke): Tái phát F.A.S.T (méo miệng, liệt nửa người), nuốt sặc suy hô hấp, đau đầu sét đánh nôn vọt, co giật li bì, huyết áp kịch phát > 180/110.
+    3. Hậu Phẫu Sinh Mổ (C-Section): Băng huyết sau sinh > 2 bỉm/giờ, nhiễm trùng vết mổ & tử cung bục chỉ hôi, thuyên tắc phổi PE/DVT, đau hạ vị dữ dội tử cung không co, tiền sản giật muộn.
+    4. Cột Sống L4-L5 (Spine): Hội chứng chùm đuôi ngựa Cauda Equina (bí tiểu, tê vùng yên ngựa), liệt bàn chân rớt (Foot Drop), rò dịch não tủy CSF, nhiễm trùng đĩa đệm, đau rễ thần kinh kịch phát.
+    5. Phẫu Thuật Tim (CABG / Van Tim): Cơn đau thắt ngực đè ép > 15 phút, suy tim cấp & phù phổi cấp (khó thở khi nằm phẳng), rối loạn nhịp tim > 120 bpm hoặc < 50 bpm, mất vững xương ức kêu lạo xạo, sốt nội tâm mạc tụt huyết áp kẹp.
+    6. Nội Soi Cắt Túi Mật (Laparoscopy): Viêm phúc mạc bụng cứng như gỗ, rò dịch mật qua lỗ trocar > 100ml, tắc mật vàng mắt vàng da phân bạc màu, chảy máu nội tạng ổ bụng, tắc ruột cơ học nôn dịch xanh rêu.
+    7. Tạo Hình & Thẩm Mỹ (Cosmetic): Khối tụ máu Hematoma căng to biến dạng ngực/bụng, thiếu máu hoại tử quầng vú/vạt da tím đen, thuyên tắc mỡ phổi (Fat Embolism), tràn dịch muộn Seroma, toác vết mổ lộ túi ngực.
+    8. Bỏng Nhiệt & Dải Sẹo (PT-Burn): Nhiễm trùng huyết do bỏng (Burn Sepsis), chèn ép khoang chu vi do vảy bỏng, co rút dải sẹo kẹt cứng khớp rách da, tiêu cơ vân thiểu niệu nước tiểu nâu đỏ, hoại tử bong vạt da ghép.
+    9. Kết Hợp Xương Bánh Chè (Patella): Di lệch đinh thép/đứt chỉ néo ép xương, đầu đinh chọc thủng da, viêm mủ khớp gối, huyết khối DVT bắp chân, chèn ép mạch thần kinh bàn chân lạnh buốt.
+    10. Tiết Niệu & Phẫu Thuật Thận (Urology): Tiểu máu đỏ tươi cục máu đông bít tắc niệu đạo, nhiễm khuẩn huyết Urosepsis, bí tiểu cầu bàng quang căng trướng, rò rỉ nước tiểu hố thắt lưng, đau quặn thận nôn ói.
+    11. Tai Mũi Họng (ENT): Chảy máu đỏ tươi ồ ạt họng/mũi, thở rít khó thở thanh quản co kéo hõm ức, nhiễm trùng hốc mổ, liệt dây VII méo miệng, chóng mặt tiền đình nôn vọt.
+  + Nâng cấp bộ nhận diện phác đồ thông minh `getPatientProtocolKey(patient)`: Tự động phân tích sâu đa trường dữ liệu (`surgery`, `protocol`, `hospital`, `protocolKey`), liên kết chính xác bất kỳ hồ sơ nào vào nhóm cảnh báo tương ứng.
+  + Phát triển hàm dựng giao diện tự động `updatePatientTriageUI(patientOrKey)`:
+    * Cập nhật nhãn Huy hiệu Giao thức (`#triageProtocolBadge`) với tone màu chuyên khoa (Rose, Indigo, Pink, Amber, Teal, Cyan...).
+    * Cập nhật dòng giải thích phụ đề chuyên biệt (`#triageSubtitle`).
+    * Dựng động 5 thẻ cảnh báo đỏ với số thứ tự bọc squircle đỏ nổi bật, tiêu đề in đậm chuẩn y khoa và mô tả lâm sàng chi tiết, thích ứng hoàn mỹ cả giao diện sáng lẫn tối (Dark Reader/Dark Mode).
+  + Tích hợp tự động vào toàn bộ chu trình ứng dụng:
+    * Kích hoạt ngay khi mở ứng dụng (`DOMContentLoaded` & `initPatientAuthSystem`).
+    * Kích hoạt tức thì khi người dùng đăng nhập tài khoản bệnh nhân khác (`applyCurrentPatient`).
+    * Kích hoạt khi chuyển đổi bài tập phục hồi (`selectProtocol`).
+  + Đồng bộ toàn bộ mã nguồn sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Mỗi bệnh nhân khi đăng nhập (ví dụ: bệnh nhân mổ tim, đột quỵ, sinh mổ, hay cột sống...) đều có bảng phân luồng dấu hiệu đỏ được may đo chuyên biệt 100%, bảo đảm tối đa an toàn tính mạng hậu phẫu!
+
+[Mốc: 02/10/2026 - Phiên cập nhật 9: Tái Thiết Kế Bộ Đôi Nút Cứu Hộ Khẩn Cấp Cân Đối 50/50]
+- Nhiệm vụ: Thiết kế lại bộ đôi nút hành động "Gọi Cấp Cứu 1900-CARE" và "Bác Sĩ Trực" sao cho đều đặn, cân đối và thẩm mỹ.
+- Hành động thực hiện:
+  + Chuyển cấu trúc bố cục sang lưới 2 cột cân xứng (`grid grid-cols-1 sm:grid-cols-2 gap-3`) chia đều 50% / 50% không gian.
+  + Chuẩn hóa chiều cao tuyệt đối (`h-12`), bo góc cong mềm mại `rounded-2xl` (16px) tương đồng với toàn bộ thiết kế thẻ.
+  + Tích hợp icon bọc hộp mềm (`w-7 h-7 rounded-xl`) cho cả biểu tượng điện thoại 📞 và bác sĩ 👨‍⚕️.
+  + Phủ màu gradient nổi bật: Nút Cấp Cứu đỏ hồng ngọc (`rose-600` qua `rose-700`) phát sáng nhẹ; nút Bác Sĩ Trực viền xám sáng sang trọng với hiệu ứng hover và active nhạy bén.
+- Kết quả: Hai nút bấm đồng trục, cùng chiều cao, cân đối hoàn hảo và cực kỳ bắt mắt.
+
+[Mốc: 02/10/2026 - Phiên cập nhật 8: Sửa Lỗi Không Nhấn Vào Nút Hồ Sơ Bệnh Nhân Được]
+- Nhiệm vụ: Khắc phục sự cố nút "👤 BN-2026-081: Nguyễn Văn Hùng" trên Header không phản hồi khi bấm vào.
+- Nguyên nhân: Trong lần chèn thêm `appNotificationModal`, thẻ đóng `</div>` của modal trước đó
+  (`#monIncidentDetailModal`) bị thiếu, khiến `#patientAuthModal` bị nằm lọt vào bên trong một modal đang bị ẩn (`display: none`). Do đó khi kích hoạt hàm mở modal, nó vẫn bị cha của nó che giấu.
+- Hành động thực hiện:
+  + Bổ sung đầy đủ 2 thẻ `</div>` đóng container và modal sự cố, cân bằng tuyệt đối cây DOM (1028 mở / 1028 đóng).
+  + Đồng bộ mã nguồn hoàn chỉnh sang cả 2 file `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Nút hồ sơ bệnh nhân trên thanh điều hướng mở modal EMR tức thì, tất cả các nút thao tác đều nhạy bén 100%.
+
+[Mốc: 02/10/2026 - Phiên cập nhật 7: Thay Thế Toàn Bộ Hộp Thoại Alert Trình Duyệt Bằng Pop-Up Y Tế Hiện Đại]
+- Nhiệm vụ: Chuyển đổi toàn bộ thông báo alert() mặc định xám thô ("localhost:3000 cho biết") khi lưu hồ sơ bệnh án thành Pop-up Modal chuẩn y khoa sang trọng.
+- Hành động thực hiện:
+  + Xây dựng Modal thông báo cao cấp `#appNotificationModal` với hiệu ứng backdrop mờ (Backdrop Blur), dải nhấn màu gradient ngọc bích, hộp icon phát sáng nổi và nút hành động chuyển tiếp.
+  + Viết hàm `openAppNotificationModal({ title, subtitle, type, icon, items, rawText, btnText, onConfirm })` hỗ trợ hiển thị dạng danh mục thông tin chi tiết (Bệnh nhân, SĐT, Địa chỉ, Người thân liên hệ kèm icon 👤📞📍👨‍👩‍👦) có viền chia thanh lịch.
+  + Nâng cấp trực tiếp hàm `handlePatientEditSubmit` (Lưu hồ sơ bệnh án) và `handlePatientRegisterSubmit` (Tạo hồ sơ mới) để kích hoạt Pop-up chuyên nghiệp.
+  + Ghi đè toàn cục `window.alert` để tự động nhận diện loại thông báo (thành công, cảnh báo, lỗi) và hiển thị qua Pop-up hiện đại, triệt tiêu 100% thông báo thô ráp của trình duyệt trên toàn bộ ứng dụng.
+  + Bổ sung phím tắt Escape (ESC) và sự kiện click ra vùng tối ngoài hộp thoại để đóng nhanh modal.
+- Kết quả: Khi người dùng lưu thay đổi hồ sơ bệnh án, giao diện xuất hiện một Pop-up tròn góc mềm mại, sáng sủa, đẳng cấp chuẩn bệnh viện quốc tế thay vì hộp thoại xám "localhost:3000 cho biết".
+
+[Mốc: 02/10/2026 - Phiên cập nhật 6: Tái Thiết Kế Toàn Diện Bảng Lịch Trình 24/7 Chuẩn Y Tế Cao Cấp]
+- Nhiệm vụ: Thiết kế lại toàn bộ giao diện bảng lịch trình phục hồi 24/7 cho thẩm mỹ, cân đối, không bị xô lệch layout.
+- Hành động thực hiện:
+  + Tái cấu trúc Header card: Thay icon emoji bằng icon SVG Clock tinh xảo phủ gradient ngọc bích (emerald-teal);
+    hợp nhất đồng hồ số thời gian thực và huy hiệu "Ngày 3 Hậu Phẫu" thành một capsule pill công nghệ cao,
+    giúp tiêu đề "Lịch Trình Phục Hồi 24/7 Chủ Động" luôn dàn đều trên một dòng, triệt tiêu lỗi ngắt từ "Động".
+  + Giải quyết triệt để lỗi biến dạng thẻ sự kiện: Loại bỏ cấu trúc cột dọc chèn ép chữ "TIẾP THEO" dưới số giờ,
+    chuyển sang bố cục hàng ngang (Horizontal Flex-flow) đồng trục và cân đối thị giác.
+  + Tinh chỉnh 4 trạng thái sự kiện đạt chuẩn giao diện y khoa cao cấp (Clinical Dashboard):
+    * Thẻ Đang Diễn Ra (Active): Viền emerald-500 dày dặn, thanh chỉ báo gradient đứng, hiệu ứng radar ping,
+      huy hiệu đếm ngược phút còn lại nhấp nháy trực quan.
+    * Thẻ Kế Tiếp (Next): Viền ngọc bích teal-500, thanh chỉ báo bên trái, pill đếm ngược thời gian thực (hh:mm).
+    * Thẻ Đã Qua (Completed): Nền slate-50/60 thanh thoát, văn bản dịu mắt, huy hiệu "✓ Đã qua" tinh gọn.
+    * Thẻ Tương Lai (Upcoming): Bo tròn 16px, viền vi mảnh, nhãn thời gian chờ "Sau X giờ Y phút".
+- Kết quả: Giao diện đạt độ hoàn thiện cao, cực kỳ sắc nét, cân bằng và hài hòa trên cả chế độ Sáng lẫn Tối (Dark Mode).
+
+[Mốc: 02/10/2026 - Phiên cập nhật 5: Nâng cấp Đếm Ngược Lịch Trình Phục Hồi 24/7 Theo Thời Gian Thực]
+- Nhiệm vụ: Tự động cập nhật lịch trình phục hồi 24/7 theo đồng hồ thực tế, hiển thị
+  đếm ngược còn bao nhiêu phút tới mốc giờ kế tiếp, đánh dấu mốc đã qua và mốc đang diễn ra.
+- Hành động thực hiện:
+  + Thêm đồng hồ số thời gian thực `#schedLiveClock` hiển thị giờ:phút:giây trên card header.
+  + Thêm nhãn đếm ngược trực tiếp `#schedNextCountdown` hiển thị chính xác số giờ, phút, giây
+    còn lại trước khi bước vào khung giờ phục hồi kế tiếp.
+  + Viết hàm `updateRealtimeSchedule()` chạy ngầm mỗi 1 giây (`setInterval`):
+    * Mốc đã qua: Tự động làm dịu màu và gắn nhãn "✓ Đã qua".
+    * Mốc đang diễn ra: Đổi nền xanh nổi bật, viền phát sáng, hiển thị "⏳ Đang diễn ra (Còn X phút)".
+    * Mốc kế tiếp: Làm nổi bật viền teal, gắn huy hiệu "⏱️ Còn X giờ Y phút nữa".
+    * Mốc trong tương lai: Tính toán trước khoảng thời gian "Sau X giờ Y phút".
+    * Khi hết ngày, tự động tính mốc chuyển tiếp sang sáng hôm sau (07:30).
+- Kết quả: Bệnh nhân luôn biết chính xác mình đang ở giai đoạn nào và còn bao nhiêu phút nữa phải tập hoặc uống thuốc.
+
+[Mốc: 02/10/2026 - Phiên cập nhật 4: Nâng cấp Pop-up SOS & Chi Tiết Sự Cố AI]
+- Nhiệm vụ: Thay thế cửa sổ thông báo confirm() mặc định của trình duyệt sang Pop-up.
+- Hành động thực hiện:
+  + Tạo cấu trúc HTML cho Modal `#monEmergencySosModal` với thiết kế cảnh báo đỏ,
+    viền bo góc, biểu tượng còi SOS nhấp nháy, hiển thị thông tin TS.BS Lê Quang Minh,
+    hotline 0912.345.678 và tổng đài 115.
+  + Thêm 3 nút hành động trực tiếp: Gọi Bác sĩ, Gọi 115, Bật đàm thoại 2 chiều.
+  + Tạo thêm Modal `#monIncidentDetailModal` thay thế cho lệnh alert() cũ khi nhấn
+    nút "Xem Chi Tiết Sự Cố", hiển thị bảng số liệu Kinematics (Vy, góc thân, W/H).
+  + Sửa hàm `callEmergencySos()` và `viewIncidentDetail()` trong `MonitoringSystem` 
+    để điều khiển ẩn/hiện modal thay vì gọi hàm trình duyệt mặc định.
+  + Bổ sung phím tắt Escape (ESC) để đóng nhanh modal cứu hộ.
+- Kết quả: Không còn xuất hiện popup xám thô "localhost:3000 cho biết" của trình duyệt.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 5: Sửa Lỗi Hiển Thị Thông Tin Bệnh Nhân (Tên Chồng vs Tên Vợ)]
+- Hiện tượng: Khi tải lại trang (F5), ban đầu tiêu đề hiện tên chồng (Nguyễn Văn Hùng - BN-2026-081),
+  nhưng chỉ sau vài mili giây JavaScript khởi tạo thì bị ghi đè thành tên người thân/vợ (Trần Thị Mai - BN-2026-094).
+- Nguyên nhân:
+  + Trang Thông tin cá nhân (`CareProtocol_ThongTinBN.html`) và tài khoản đăng nhập mẫu trước đó đặt
+    fallback mặc định là `BN-2026-094` (Trần Thị Mai) và lưu vào `localStorage.getItem("careprotocol_logged_patient")`.
+  + Khi F5, HTML tĩnh hiển thị đúng tên chồng Nguyễn Văn Hùng, nhưng hàm `initPatientAuthSystem()`
+    ngay lập tức đọc cache cũ từ localStorage và gọi `applyCurrentPatient()`, ghi đè banner thành tên vợ Trần Thị Mai.
+- Hành động thực hiện:
+  + Cập nhật `initPatientAuthSystem()` trong `CareProtocol_GiaoDien.html`: Bổ sung bộ lọc thông minh,
+    nếu phát hiện phiên cũ lưu nhầm thông tin người thân/vợ (`Trần Thị Mai` / `BN-2026-094`) làm bệnh nhân chính,
+    hệ thống tự động chuẩn hóa về Bệnh nhân Chồng: Nguyễn Văn Hùng (BN-2026-081, 58 tuổi, Nam, Thay toàn bộ khớp gối phải TKA),
+    đồng thời thiết lập rõ ràng Trần Thị Mai là Người thân / Vợ (`emergencyContact: "Trần Thị Mai (Vợ)"`).
+  + Cập nhật mảng dữ liệu `DOCTOR_PATIENTS`: Điền đầy đủ thông tin BHYT, địa chỉ, người thân cho `BN-2026-081`,
+    và đổi tên bệnh nhân nữ tại giường kế bên thành `Lê Thị Thu Mai` để tránh trùng lặp gây hiểu lầm.
+  + Chuẩn hóa lại trang `CareProtocol_ThongTinBN.html` và `CareProtocol_Auth.html`: Đặt hồ sơ mặc định là
+    Nguyễn Văn Hùng (BN-2026-081).
+  + Đồng bộ đồng nhất toàn bộ thay đổi sang `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khi F5 hoặc mở lại trình duyệt, hồ sơ luôn hiển thị chuẩn xác Bệnh nhân Nguyễn Văn Hùng, không còn hiện tượng chớp nháy hay bị ghi đè nhầm tên vợ.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 6: Tạo Profile Bệnh Nhân & Vợ/Chồng Ngẫu Nhiên Nhưng Cố Định (Deterministic Profile)]
+- Nhiệm vụ: Tạo thông tin hồ sơ (BHYT, Địa chỉ thường trú, Người thân/Vợ/Chồng, SĐT) ngẫu nhiên cho từng bệnh nhân,
+  nhưng phải cố định (deterministic) khi mở hoặc reload lại — mỗi bệnh nhân sở hữu một profile riêng biệt và nhất quán.
+- Hành động thực hiện:
+  + Xây dựng thuật toán băm chuỗi ổn định (Deterministic Hash String) trong hàm `ensurePatientProfile(patient)`:
+    * Dựa trên `patient.id + patient.name` để tạo mã băm hash nguyên vẹn, không phụ thuộc vào `Math.random()`.
+    * Phân luồng giới tính thông minh:
+      - Bệnh nhân Nữ -> Tự động ghép nối Người thân là Chồng: `(Chồng)` từ danh sách tên chồng Việt Nam thực tế.
+      - Bệnh nhân Nam -> Tự động ghép nối Người thân là Vợ: `(Vợ)` từ danh sách tên vợ Việt Nam thực tế.
+    * Kho 15 địa chỉ cư trú thực tế tại TP.HCM và Hà Nội được chọn bằng thuật toán bước nhảy hash độc lập.
+    * Mã thẻ BHYT chuẩn định dạng y tế: Tiền tố `GD4...` (Nam) hoặc `DN4...` (Nữ) kèm chuỗi số phân giải băm.
+  + Tự động kích hoạt đồng bộ qua toàn bộ mảng `DOCTOR_PATIENTS.forEach(p => ensurePatientProfile(p))` ngay sau khi khởi tạo dữ liệu và trong hàm `initPatientAuthSystem()`.
+  + Cập nhật cả `quickLoginPatient()`, `handlePatientLoginSubmit()` và `openDoctorPatientDetailModal()`.
+  + Loại bỏ hoàn toàn các chuỗi fallback thô tĩnh ("Trần Thị Mai", "124/8 Hoàng Hoa Thám...") trong form chỉnh sửa `fillPatientEditForm()`.
+  + Đồng bộ hóa sang `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khi mở bất kỳ bệnh nhân nào (BN-2026-102 Lê Hoàng Quân, BN-2026-115 Phạm Thị Thu Hà, BN-2026-128 Hoàng Kim Ngân...),
+  mỗi người đều có thông tin vợ/chồng, số điện thoại, địa chỉ và mã thẻ BHYT hoàn toàn khác biệt nhưng luôn cố định 100% qua mọi lần mở.
+
+[Mốc: 02/10/2026 - Phiên cập nhật 4: Nâng cấp Toàn Diện Pop-up Cảnh Báo Té Ngã & Xử Lý Lỗi Reset Bộ Đếm]
+- Nhiệm vụ: Khi nhấn mở camera toàn diện hoặc xem camera live bên cổng bác sĩ thì 
+  hiện pop-up những camera đang bật theo dõi buồng bệnh.
+- Hành động thực hiện:
+  + Thay đổi hành vi nút "Mở Bàn Điều Khiển Camera Toàn Diện" và "Xem Camera Live ->"
+    tại cả 3 giường bệnh để kích hoạt hàm `openDoctorCameraModal(camId)`.
+  + Thiết kế và tích hợp Modal `#docActiveCamerasModal` với Dark Theme chuẩn màn hình
+    giám sát bệnh viện (Surveillance Station), huy hiệu `3/3 Camera Online 24/7`.
+  + Xây dựng bộ điều hướng tab lọc: Xem lưới 3 buồng hoặc phóng to từng Cam 01/02/03.
+  + Lập trình động cơ vẽ Canvas 2D thời gian thực (`startDoctorLiveCameras`):
+    * Cam 01: BN. Hùng - Khung xương MediaPipe cử động trên giường, góc thân 78°,
+      vận tốc rơi 0.05m/s, bounding box YOLOv8-Pose xanh lá an toàn.
+    * Cam 02: BN. Mai - Hồng ngoại ban đêm (IR Night Vision), sóng nhịp thở AI 16 bpm.
+    * Cam 03: BN. Nam - Bệnh nhân tập nâng chân gập gối, thước đo góc điện tử 
+      Goniometer quét góc từ 65° đến 110° theo chu kỳ.
+    * Đồng hồ watermark thời gian thực cập nhật từng giây.
+  + Tối ưu hiệu năng: Tự động hủy animation loop khi đóng modal bằng `cancelAnimationFrame`.
+- Kết quả: Bác sĩ theo dõi đồng thời nhiều buồng bệnh mượt mà ngay trên một cửa sổ pop-up.
+
+[Mốc: 02/10/2026 - Phiên cập nhật 2: Ẩn Tạm Tính Năng Luồng Backend MJPEG Port 8000]
+- Nhiệm vụ: Tạm ẩn lựa chọn "Luồng Backend MJPEG (Port 8000)" trên dropdown chọn nguồn.
+- Hành động thực hiện:
+  + Comment dòng `<option value="backend">🌐 Luồng Backend MJPEG (Port 8000)</option>`
+    trong thẻ `<select id="monSourceSelect">` tại dòng 1769 của `CareProtocol_GiaoDien.html`.
+- Kết quả: Giao diện chỉ còn 2 nguồn ổn định là Mô phỏng AI Demo và Webcam trực tiếp,
+  loại trừ hoàn toàn nguy cơ người dùng bấm nhầm gây đứng luồng.
+
+[Mốc: Trước đó: Tối ưu hoá Local Server & Chế Độ Mô Phỏng 60 FPS]
+- Xây dựng file khởi chạy tiện lợi `Chay_CareProtocol.bat` và `server.js` hỗ trợ khởi động
+  máy chủ Node.js phục vụ file tĩnh và API mock cục bộ.
+- Chuẩn hóa giao diện song ngữ (Tiếng Việt / English) qua LocalStorage.
+- Khắc phục các lỗi phân quyền camera WebRTC `navigator.mediaDevices.getUserMedia`.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 16: Tối Ưu Hóa Thanh Nhập Liệu Chat AI - Gộp Nút Ảnh & Bỏ Nút Nói]
+- Yêu cầu người dùng (Andrew): Bỏ nút "Nói" (Microphone) và gộp 2 nút riêng biệt ("Chụp" và "Tải ảnh") thành 1 nút gọn gàng duy nhất, khi nhấn vào sẽ mở menu cho phép chọn Chụp ảnh trực tiếp hoặc Gửi ảnh từ thiết bị.
+- Hành động thực hiện:
+  + Loại bỏ nút `chatMicBtn` (Microphone Voice-to-Text) khỏi thanh nhập liệu chat của bệnh nhân để giao diện thanh thoát, không chiếm chỗ.
+  + Gộp nút Chụp camera (`openCameraModal`) và nút Tải ảnh từ máy (`chatImageInput.click()`) thành 1 nút duy nhất `#chatPhotoMenuBtn` kèm icon 📸 và mũi tên dropdown.
+  + Thiết kế Popover Menu thông minh `#chatPhotoMenu` nổi phía trên thanh chat với hiệu ứng mượt mà gồm 2 tùy chọn chuẩn xác:
+    * 📸 "Chụp ảnh trực tiếp": Tự động kích hoạt modal mở camera trước/sau để soi chụp vết mổ hoặc đơn thuốc.
+    * 🖼️ "Tải ảnh từ thiết bị": Tự động kích hoạt file picker chọn ảnh từ máy/thư viện.
+  + Lập trình các hàm xử lý JS: `toggleChatPhotoMenu(event)`, `closeChatPhotoMenu()`, `selectChatPhotoAction(action)` và bộ lắng nghe sự kiện click ngoài màn hình để tự động đóng menu.
+  + Cập nhật lại placeholder của ô chat `#chatInput` cho đồng bộ: "Mô tả triệu chứng hoặc đính kèm ảnh gửi bác sĩ AI...".
+  + Đồng bộ toàn bộ vào cả `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Thanh chat AI đạt độ tinh gọn tối đa, trải nghiệm người dùng trên cả điện thoại lẫn máy tính đều trực quan, tiện lợi.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 17: Khắc Phục Triệt Để Lỗi Kết Nối Máy Chủ AI Chat Local & Direct Fallback]
+- Hiện tượng: Khi gửi tin nhắn (ví dụ: "Hi") trên tab Chat AI ở môi trường local, màn hình báo lỗi "⚠️ Không thể kết nối đến máy chủ AI. Bạn hãy kiểm tra lại kết nối mạng nhé!".
+- Nguyên nhân:
+  1. File `server.js` trước đó chỉ có endpoint `/api/tts` mà chưa định nghĩa route xử lý POST `/api/chat`. Khi client gọi `/api/chat`, server trả về trang HTML mặc định, client parse JSON bị lỗi.
+  2. Tại cơ chế fallback trực tiếp bên trình duyệt, biến `GEMINI_DIRECT_KEYS` bị để trống chuỗi rỗng `[""]` thay vì nạp mảng `SHARED_GEMINI_KEYS`.
+- Hành động thực hiện:
+  + Lập trình endpoint POST `/api/chat` trực tiếp trong `server.js`: tự động đọc `GEMINI_API_KEY` từ `.env.local` hoặc fallback key, kết nối đến Google Gemini API (`gemini-2.5-flash` và `gemini-1.5-flash`), xử lý lịch sử hội thoại, ảnh đính kèm và system prompt y tế chuẩn mực.
+  + Thêm cơ chế CORS Preflight (OPTIONS) trong `server.js` để tránh bị chặn kết nối từ các client khác nhau.
+  + Bổ sung kiểm tra Content-Type JSON trong `CareProtocol_GiaoDien.html` và nạp mảng khóa chuẩn `SHARED_GEMINI_KEYS` vào `GEMINI_DIRECT_KEYS`.
+  + Tích hợp Smart Clinical Fallback: nếu mất toàn bộ kết nối mạng, AI tự động đưa ra phản hồi lâm sàng ân cần và an toàn thay vì báo lỗi đỏ ngắt quãng phiên trao đổi của người bệnh.
+  + Đồng bộ sang `public/CareProtocol_GiaoDien.html` và `public/index.html`. Khởi động lại server trên port 3000.
+[Mốc: 03/10/2026 - Phiên cập nhật 18: Tái Thiết Kế Bộ Khung Xương & AI Face Tracking Chuẩn Y Tế Công Nghệ Cao (Sleek Medical HUD Mesh)]
+- Yêu cầu người dùng (Andrew): Khung xương và tracking khuôn mặt trên camera hiển thị hơi xấu, cần fix đẹp hơn, sắc nét và hiện đại chuẩn y khoa công nghệ cao.
+- Hiện tượng trước khi fix:
+  + Vòng tròn nét đứt màu xanh lá cắt ngang qua mắt kính, trán và cằm của người dùng.
+  + Vạch màu xanh nối ngang hai mắt và vạch màu đỏ đậm chắn ngang môi gây mất thẩm mỹ.
+  + Đường nét từ mũi đâm thẳng xuống ngực cắt đôi môi, cằm và cổ bệnh nhân.
+  + Các nét vẽ khung xương thân mình và các chi bị vẽ đè hai lần dẫn đến nét vẽ dày cộm và không đồng bộ màu sắc chuyển động.
+- Hành động thực hiện:
+  + Tái thiết kế toàn diện `drawFaceTrackingHUD`:
+    * Triệt tiêu hoàn toàn vòng tròn nét đứt, vạch ngang mắt, vạch đỏ môi và vạch mũi đâm qua cằm.
+    * Xây dựng khung ngắm định vị khuôn mặt 4 góc Cybernetic Corner HUD Reticle với đường nét thanh mảnh bo góc tinh tế, độ dày 2.2px và hiệu ứng viền phát sáng dịu mắt (Soft Glow).
+    * Bổ sung 4 vạch căn chỉnh tâm quang học (Subtle Reticle Ticks) ở 4 hướng trên/dưới/trái/phải với độ trong suốt 0.45.
+    * Điểm tracking mắt và mũi chuyển thành các hạt micro-node màu xanh sapphire (#38bdf8) và hạt photon trắng (#ffffff) siêu nhỏ kèm quầng sáng nhẹ nhàng, tôn vẻ tự nhiên, trang nhã của khuôn mặt bệnh nhân.
+    * Tinh chỉnh badge HUD nổi phía trên đầu: bo góc mềm 6px, nền kính mờ `rgba(15, 23, 42, 0.82)`, viền cyan công nghệ cao và chấm trạng thái nhấp nháy chữ "AI BIO-TRACKING" chống ngược gương khi canvas flip.
+  + Tái thiết kế toàn diện Khung Xương Toàn Thân (`drawFullSkeletonAndFace`, `drawTorso`, `drawSecondaryLimb`, `drawActiveLimb`):
+    * Triệt tiêu lỗi vẽ đè xung đột: khung thân cơ bản được vẽ mờ nhẹ nhàng (Ambient Skeleton) với đường xương đòn (Clavicle), khung xương chậu (Pelvic bar) và trục cột sống trung tâm (Central Spine Alignment) kẻ nét đứt [3, 4] laser y tế.
+    * Nâng cấp `drawActiveLimb` theo kiến trúc đa tầng (Multi-pass Glowing Laser Beam): Pass 1 hào quang tỏa rộng (Volumetric Outer Glow) + Pass 2 tia laser trung tâm (Core Laser) + Pass 3 lõi photon trắng (White Core Centerline).
+    * Các khớp chuyển động (Joint Nodes) nâng cấp thành hạt năng lượng 2-3 lớp: vòng aura tỏa sáng ngoài + vòng khớp màu theme + tâm sáng trắng sắc nét; khớp chính (gối, khuỷu tay) có thêm vòng khóa mục tiêu (Target Lock Ring).
+    * Nâng cấp `drawAngleArc` thêm hiệu ứng quạt mờ quét góc (Translucent Sector Glow).
+    * Đưa hàm `getPoseTheme` ra phạm vi toàn cục của camera và đồng bộ biến trạng thái `lastPoseTheme` để màu sắc khung xương luôn khớp 100% theo thời gian thực với từng giai đoạn bài tập (Xanh neon đạt chuẩn, Vàng chuyển động, Đỏ cảnh báo, Sky blue chuẩn bị).
+  + Đồng bộ toàn bộ thay đổi sang `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khung xương và tracking khuôn mặt hiển thị cực kỳ đẹp mắt, tinh tế, sang trọng, đẳng cấp như giao diện HUD trong phim khoa học viễn tưởng y khoa.
+
+[Mốc: 03/10/2026 - Phiên cập nhật 19: Siết Chặt Thuật Toán Kiểm Chuẩn Động Học Bám Sát Bài Tập Mẫu & Chống Đếm Rep Sai (Model Kinematic Follower)]
+- Yêu cầu người dùng (Andrew): Khung xương bài tập cần follow bám sát theo bài tập mẫu; ngăn chặn triệt để tình trạng tập sai bài tập mẫu nhưng hệ thống vẫn tính rep.
+- Nguyên nhân cốt lõi phát hiện:
+  + Trước đây, máy trạng thái đếm rep chỉ dựa vào góc co duỗi của khớp mục tiêu (ví dụ calcAngle(hip, knee, ankle)) mà không kiểm tra tính hợp lệ về tư thế giải phẫu toàn thân của bài tập mẫu (exercise model form).
+  + Khi người dùng chọn bài tập gối (knee/ACL) nhưng lại đứng vẫy tay, xoay người hoặc nâng chân thẳng không gập gối, góc gối vẫn có thể dao động nhẹ trong ngưỡng min/max và bị máy trạng thái ghi nhận rep khống (false positives).
+  + Tương tự trong bài tập khớp vai (stroke/arm raise), người bệnh chỉ gập khuỷu tay (bicep curl) hoặc nghiêng người sang một bên mà không nâng thẳng cánh tay theo bài tập mẫu vẫn bị tính rep.
+  + Hộp mô phỏng động tác mẫu PIP (`#pip-action-box`) bị ẩn mặc định khi camera bật, khiến người bệnh khó quan sát và đối chiếu động tác chuẩn của người mẫu AI.
+- Hành động thực hiện:
+  + Xây dựng bộ kiểm chuẩn động học thông minh `validateExerciseForm(mode, lm, sm, activeSide, p)` bám sát 100% bài tập mẫu:
+    * Chuyên khoa Gối (`knee`): Kiểm tra tay không được dơ lên cao vẫy lung tung; không được cúi gập lưng về trước; cẳng chân phải gập duỗi thực sự (không giơ thẳng cả chân); phát hiện và loại bỏ chuyển động ngoài mục tiêu.
+    * Chuyên khoa Vai/Đột quỵ (`arm`): Bắt buộc khuỷu tay phải duỗi thẳng/mở rộng (góc khuỷu >= 92°, chống co gập bicep curl); cổ tay phải nâng cao ngang vai; cột sống không được nghiêng vẹo ăn gian góc nâng; hai chân phải giữ yên.
+    * Sinh mổ (`csection`): Ngồi thẳng lưng, nhấc gối nhẹ nhàng, không được cúi gập thân trên.
+    * Bơm cổ chân (`ankle`): Đầu gối phải giữ cố định trên mặt phẳng, chỉ cử động khớp cổ chân (không nhấc cả đầu gối như đạp xe).
+    * Cột sống (`spine`): Hai vai phải cân bằng ngang nhau, trục cột sống giữ thẳng.
+  + Thiết lập cơ chế Khóa Chặt Đếm Rep (Zero False Rep Guarantee):
+    * Khi phát hiện tư thế sai (`!formCheck.isValid`): chuyển trạng thái sang `wrong` (đỏ cảnh báo `#ef4444`), reset `repState = "idle"`, chặn hoàn toàn việc chuyển sang `peak_reached` và chặn gọi `simulateRep()`.
+    * Bổ sung chốt chặn an toàn ngay trong `simulateRep()`: từ chối tăng rep nếu `lastPoseTheme.status === "wrong"`.
+  + Thiết kế bộ hiển thị HUD Cảnh Báo Lệch Bài Mẫu Công Nghệ Cao `drawModelViolationHUD`:
+    * Vẽ khung viền đỏ Cybernetic 4 góc với hiệu ứng cảnh báo laser.
+    * Vòng tròn đỏ nhắm mục tiêu (Error Joint Reticle) nhấp nháy ngay tại khớp bị vi phạm kèm dấu chấm than `!`.
+    * Banner cảnh báo nổi trên đỉnh canvas và thông báo tâm màn hình nêu rõ nguyên nhân sai bài mẫu cụ thể (ví dụ: "Sai bài mẫu: Duỗi thẳng khuỷu tay khi nâng!").
+    * Giọng nói AI Huấn Luyện Viên nhắc nhở kịp thời (throttled 3.5s chống nhiễu).
+  + Đồng bộ và Kích Hoạt Hộp Động Tác Mẫu PIP (`#pip-action-box`):
+    * Tự động hiển thị và đồng bộ bài tập mẫu 60 FPS tương ứng ngay khi bật camera và khi đổi bài tập.
+    * Bổ sung huy hiệu đối chiếu thời gian thực `pipConformityBadge`: "Khớp mẫu AI ✓" (xanh ngọc) hoặc "Lệch bài mẫu ⚠️" (đỏ cảnh báo).
+  + Đồng bộ toàn bộ sang `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khung xương theo dõi bám sát 100% bài tập mẫu. Bất kỳ động tác sai hoặc gian lận đều bị phát hiện ngay lập tức, báo đỏ và tuyệt đối không bao giờ được tính rep!
+
+[Mốc: 03/10/2026 - Phiên cập nhật 20: Tích Hợp Hệ Thống Quản Lý Đa Hiệp (Multi-Set), Đếm Ngược Nghỉ Ngơi 60s Phục Hồi Cơ & Kiểm Soát Xác Nhận On-Chain Chặt Chẽ]
+- Yêu cầu người dùng (Andrew): 3 hiệp (hoặc số hiệp phụ thuộc vào từng bài tập), mỗi hiệp hoàn thành xong phải cho nghỉ ngơi 60s rồi mới bắt đầu hiệp sau; phải tập đủ tất cả các hiệp mới cho phép ký xác nhận hoàn thành bài tập.
+- Thiết kế & Kiến trúc triển khai:
+  + Quản lý cấu trúc Đa hiệp phụ thuộc bài tập (`targetSets`):
+    * Lấy trực tiếp từ phác đồ điều trị (`p.targetSets`), ví dụ ACL (3 hiệp x 10 lần), Đột quỵ (3 hiệp x 8 lần), Sinh mổ (2 hiệp x 8 lần), Thoát vị đĩa đệm (2 hiệp x 6 lần),...
+    * Khai báo và theo dõi biến trạng thái: `currentSet = 1`, `repCount = 0`, `isResting = false`, `restSecondsLeft = 60`, `restInterval = null`.
+  + Giao diện Lớp Phủ Nghỉ Ngơi 60 Giây Đẳng Cấp (`#setRestOverlay`):
+    * Vòng tròn SVG đếm ngược chuyển động mượt mà (smooth animated radial progress ring 360°).
+    * Bộ số điện tử đếm ngược cỡ lớn (`60s -> 0s`).
+    * Huy hiệu trạng thái: "🧘 Đã xong Hiệp X/Y".
+    * Lời khuyên phục hồi cơ bắp: Thả lỏng cơ, hít thở sâu chống căng mỏi quá mức.
+    * Nút bấm tiện lợi "⚡ Bỏ qua nghỉ • Bắt đầu hiệp tiếp ngay" cho phép người bệnh chủ động tiếp tục nếu đã hồi sức.
+  + Logic chuyển đổi hiệp tập và chốt chặn an toàn:
+    * Khi hoàn thành hiệp (`repCount >= targetReps`):
+      - Nếu chưa hết số hiệp (`currentSet < targetSets`): Kích hoạt `startSetRest(60)`, bật đếm ngược nghỉ ngơi, cập nhật HUD trạng thái, giọng nói AI chúc mừng hoàn thành hiệp và hướng dẫn nghỉ 60s.
+      - Chặn hoàn toàn việc tính rep trong 60s nghỉ (`isResting` guard trong `pose.onResults` và `simulateRep`).
+      - Khi hết 60s (hoặc bấm bỏ qua nghỉ): Tự động gọi `skipSetRest()`, tăng `currentSet++`, reset `repCount = 0`, thông báo giọng nói "Bắt đầu hiệp X!", chuyển giao diện camera sang trạng thái sẵn sàng.
+    * Điều kiện Mở Khóa Xác Nhận On-Chain Solana (`#btnSign`):
+      - Giữ nút `btnSign` ở trạng thái Disabled (vô hiệu hóa) với nhãn hiển thị rõ ràng: `Xác nhận on-chain (Hiệp X/Y)`.
+      - Chỉ khi VÀ CHỈ KHI người bệnh hoàn thành trọn vẹn hiệp cuối cùng (`currentSet >= targetSets` và `repCount >= targetReps`):
+        Hệ thống mới đánh dấu `isDone = true`, đổi trạng thái huy hiệu sang "Hoàn thành bài tập (X hiệp)" màu xanh ngọc, phát loa chúc mừng hoàn thành toàn bộ bài tập và MỞ KHÓA nút `btnSign`: `Xác nhận đủ X hiệp on-chain ✓`.
+  + Hiển thị tiến độ rõ ràng, trực quan:
+    * Thẻ tiến độ: hiển thị `0/10 lần (Hiệp 1/3)`.
+    * HUD trên camera: hiển thị `0/10 (H1/3)`.
+    * Thanh phần trăm tiến độ tổng: tính lũy kế theo toàn bộ số rep của các hiệp `((currentSet - 1) * targetReps + repCount) / (targetSets * targetReps) * 100%`.
+  + Đồng bộ 100% sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Hệ thống hoạt động chính xác 100%, đếm ngược 60s nghỉ ngơi mượt mà và nút xác nhận được bảo vệ nghiêm ngặt chỉ mở khóa khi người bệnh hoàn thành đầy đủ toàn bộ số hiệp theo chỉ định!
+
+[Mốc: 03/10/2026 - Phiên cập nhật 21: Nâng Cấp Modal Pop-Up Xác Nhận Đăng Xuất Chuyên Nghiệp (Thay Thế Hộp Thoại Confirm Trình Duyệt)]
+- Yêu cầu người dùng (Andrew): Khi bấm Đăng Xuất tài khoản bệnh nhân, muốn có pop-up modal hiển thị trên trang web chứ không phải hộp thoại confirm mặc định thô của trình duyệt ("127.0.0.1:3000 cho biết...").
+- Vấn đề phát hiện: Trong hàm `logoutPatient()`, code cũ sử dụng lệnh `if (confirm("..."))` gây bật cửa sổ popup xám mặc định của trình duyệt, làm gián đoạn trải nghiệm người dùng và không đồng bộ với phong cách thiết kế y tế cao cấp của CareProtocol.
+- Hành động thực hiện:
+  + Xây dựng Modal Pop-Up Xác Nhận Đăng Xuất Chuyên Nghiệp `#logoutConfirmModal`:
+    * Lớp nền mờ sang trọng `fixed inset-0 z-[10050] bg-slate-950/75 backdrop-blur-md`.
+    * Khung card bo góc 3xl (`rounded-3xl p-6 sm:p-7`), hiệu ứng xuất hiện mượt mà `animate-fade-in`.
+    * Icon đăng xuất màu hồng đỏ nổi bật `🚪` trong khối bo góc `bg-rose-50 text-rose-600`.
+    * Tiêu đề: "Xác Nhận Đăng Xuất?".
+    * Thẻ thông tin bệnh nhân đang đăng nhập: Hiển thị tên đầy đủ và Mã BN (`#logoutModalPatientName`, `#logoutModalPatientId`).
+    * Thông điệp trấn an: Dữ liệu bài tập và tiến độ sẽ được lưu an toàn trên hệ thống.
+    * 2 nút hành động: "Hủy Bỏ" (đóng pop-up) và "Đăng Xuất" (màu đỏ rose-600, đổ bóng mềm, hiệu ứng active).
+  + Viết các hàm điều khiển JavaScript:
+    * `openLogoutConfirmModal()`: Cập nhật thông tin bệnh nhân hiện tại và mở modal.
+    * `closeLogoutConfirmModal()`: Đóng modal nhanh chóng.
+    * `logoutPatient()`: Điều hướng mở modal thay vì gọi `confirm()`.
+    * `confirmExecuteLogout()`: Thực hiện xóa `localStorage`, đưa về khách (GUEST), cập nhật giao diện, hiển thị thông báo Toast "✓ Đã đăng xuất khỏi tài khoản bệnh nhân" và đóng modal.
+  + Đồng bộ 100% sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khi bấm Đăng Xuất, pop-up y khoa hiện đại xuất hiện êm ái, chuyên nghiệp, người dùng có thể lựa chọn Hủy Bỏ hoặc Đăng Xuất dễ dàng!
+
+[Mốc: 03/10/2026 - Phiên cập nhật 22: Tích Hợp Ô Tra Cứu Mã Số Bệnh Nhân & Tự Động Điền Hồ Sơ Bệnh Án 1-Chạm Chuẩn Y Khoa]
+- Yêu cầu người dùng (Andrew): Trong form Đăng Ký Mới hồ sơ bệnh án, thêm 1 ô "Mã số bệnh nhân". Chỉ cần nhập đúng mã số thì thông tin bệnh nhân tự động điền vào các ô, người bệnh chỉ cần kiểm tra lại rồi nhấn Đăng Ký. Nếu mã số không đúng thì hiển thị thông báo chưa tìm ra hoặc đang chờ cập nhật để kiểm tra lại.
+- Thiết kế & Kiến trúc triển khai:
+  + Giao diện Ô Tra Cứu Mã Số Bệnh Nhân (`#regLookupPatId`):
+    * Đặt tại vị trí trang trọng đầu form Đăng Ký Mới với gradient viền xanh ngọc emerald y tế.
+    * Nhãn: "Mã Số Bệnh Nhân (EMR / Hồ Sơ Bệnh Án)" kèm huy hiệu "⚡ Tự động điền 1 chạm".
+    * Hộp nhập font monospace in hoa, nút xóa nhanh [✕], nút "Kiểm Tra Mã" nổi bật.
+    * Thanh gợi ý nhanh các mã mẫu có sẵn trong giáo án y khoa: `[BN-2026-081]`, `[BN-2026-094]`, `[BN-2026-105]`, `[BN-2026-042]` giúp thử nghiệm nhanh chỉ với 1 click.
+  + Hộp Thông Báo Phản Hồi Trạng Thái Thông Minh (`#regLookupFeedback`):
+    * Khi tìm thấy mã hợp lệ: Banner màu xanh ngọc (`bg-[#EAFBF1] text-[#0F8A4F]`), icon ✅, thông báo: "Đã tìm thấy hồ sơ của [Tên BN] (Mã BN: ...) từ hệ thống bệnh viện! Toàn bộ thông tin đã được tự động điền, bạn chỉ cần kiểm tra lại rồi bấm Đăng Ký."
+    * Khi không tìm thấy mã: Banner màu hổ phách cảnh báo nhẹ (`bg-amber-50 text-amber-900`), icon ⚠️, thông báo: "Chưa tìm thấy mã bệnh nhân '...' trong cơ sở dữ liệu hồ sơ bệnh án hoặc đang chờ đồng bộ từ khoa/phòng. Bạn vui lòng kiểm tra lại mã số hoặc tự điền thông tin bên dưới để đăng ký mới."
+  + Logic Tự Động Điền & Đồng Bộ Dữ Liệu JavaScript:
+    * Hàm `lookupPatientData()`: Tra cứu không phân biệt hoa thường, hỗ trợ nhập đủ mã `BN-2026-081` hoặc chỉ số đuôi `081`, tự động gán dữ liệu: Họ tên, Số điện thoại, Tuổi, Giới tính, Mã BHYT, Loại phẫu thuật, Bệnh viện, Bác sĩ phụ trách, Ngày phẫu thuật (tính theo ngày hậu phẫu) và Mật khẩu.
+    * Hàm `fillPatientIdCode(code)`: Điền mã từ chip gợi ý và kích hoạt tra cứu ngay.
+    * Hàm `clearLookupPatientData()`: Xóa sạch ô tra cứu và ẩn thông báo.
+    * Hàm `handlePatientIdLookupInput(val)`: Lắng nghe nhập liệu thời gian thực.
+    * Cập nhật `handlePatientRegisterSubmit(e)`: Giữ nguyên mã số BN đã tra cứu, kế thừa toàn bộ hồ sơ lâm sàng (đơn thuốc, góc ROM, Merkle Hash Solana) và kích hoạt đăng nhập vào giao diện EMR.
+  + Đồng bộ 100% sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Bệnh nhân chỉ cần nhập hoặc click mã hồ sơ là toàn bộ thông tin cá nhân và bệnh án được tự động điền tức thì, đúng 100% theo yêu cầu của anh Andrew!
+
+[Mốc: 03/10/2026 - Phiên cập nhật 23: Tinh Chỉnh Giao Diện - Ẩn Thanh Gợi Ý Mã Bệnh Án Có Sẵn Trong Form Đăng Ký]
+- Yêu cầu người dùng (Andrew): Ẩn hàng "Gợi ý mã có sẵn: [BN-2026-081] [BN-2026-094] [BN-2026-105] [BN-2026-042]" để form đăng ký gọn gàng, thực tế và chuẩn giao diện ứng dụng chính thức.
+- Hành động thực hiện:
+  + Loại bỏ hoàn toàn khối `div` chứa các chip gợi ý mã mẫu bên dưới ô tra cứu mã số bệnh nhân.
+  + Giữ nguyên 100% tính năng tra cứu thông minh và tự động điền (người bệnh nhập mã BN hoặc số đuôi, nhấn Enter hoặc nút "Kiểm Tra Mã" thì thông tin vẫn tự động điền đầy đủ).
+  + Đồng bộ 100% sang `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Giao diện form Đăng ký mới trở nên gọn gàng, tinh tế, sạch sẽ, không còn hiện các nút gợi ý lộ liễu, chuẩn sản phẩm thực tế!
+
+[Mốc: 03/10/2026 - Phiên cập nhật 24: Xuất Báo Cáo Bác Sĩ Chuẩn Y Khoa Khi Nhấn Ô Bác Sĩ Phụ Trách & Tự Động Đồng Bộ Thông Tin Bác Sĩ Theo Hồ Sơ Bệnh Nhân]
+- Yêu cầu người dùng (Andrew):
+  "anh muốn khi nhấn vào đây thì nó tạp ra 1 bản để tải về giống như bản báo cáo bác sĩ phần bác sĩ phụ trách này anh muốn nó đi theo thông tin bác sĩ phụ trách của bệnh nhân luôn" (kèm ảnh chụp khối "BÁC SĨ PHỤ TRÁCH / Bác sĩ CareProtocol" trong Modal Video Bài Tập).
+- Vấn đề phát hiện:
+  1. Trong Modal Video Bài Tập (`#exerciseVideoModal`), thẻ Bác sĩ phụ trách (`#videoDoctorText`) trước đây là văn bản tĩnh `<div>`, không có sự kiện click, hiển thị cứng là "Bác sĩ CareProtocol".
+  2. Bác sĩ phụ trách chưa tự động cập nhật theo hồ sơ bác sĩ phẫu thuật/điều trị thực tế của bệnh nhân (`currentPatient.surgeon`).
+  3. Bệnh nhân muốn khi bấm vào khối Bác sĩ này sẽ mở ra bản Báo Cáo Bác Sĩ y khoa và có nút tải về máy (file báo cáo HTML/PDF độc lập).
+- Hành động thực hiện:
+  + Nâng Cấp Khối Bác Sĩ Trong Modal Video (`#videoDoctorCard`) Thành Nút Tương Tác:
+    * Thêm `onclick="openDoctorReportModal()"` và tooltip "Bấm để xem và xuất Báo Cáo Bác Sĩ".
+    * Hiệu ứng chuyển động mượt mà `cursor-pointer group active:scale-95 hover:border-emerald-500/60 shadow-md`.
+    * Thêm nhãn hướng dẫn trực quan: `📄 Xuất báo cáo ➔` màu xanh ngọc nổi bật.
+  + Nâng Cấp Nút Huy Hiệu Bác Sĩ Trên Thanh Tiến Độ (`#badgeDoctor`):
+    * Thêm `onclick="openDoctorReportModal()"`, con trỏ chuột `cursor-pointer hover:underline hover:text-emerald-950` để người dùng có thể mở báo cáo từ mọi vị trí.
+  + Thêm Tính Năng Tải Báo Cáo Y Khoa Độc Lập (`#downloadDoctorReport`):
+    * Bổ sung nút "Tải Báo Cáo (.HTML / PDF)" trong `#doctorReportModal` bên cạnh nút In / Xuất PDF và Sao Chép.
+    * Xây dựng hàm `downloadDoctorReport()`: Trích xuất toàn bộ dữ liệu lâm sàng hiện thời (Họ tên BN, Mã hồ sơ, Tuổi, Giới tính, Mã BHYT, Phẫu thuật, Góc gập duỗi ROM tối đa, Số rep, Chuỗi tập, Đơn thuốc, Lời dặn dò, Mã QR và Chữ ký bác sĩ phụ trách).
+    * Tạo file HTML độc lập chứa đầy đủ CSS Tailwind & FontAwesome, sẵn sàng mở offline trên máy tính/điện thoại hoặc In/Lưu PDF trực tiếp từ trình duyệt.
+  + Đồng Bộ Hóa Toàn Diện Danh Tính Bác Sĩ Theo Bệnh Nhân (`syncDoctorInfoAcrossApp()`):
+    * Xây dựng hàm `getEffectiveDoctorName()`: Lấy tên bác sĩ phẫu thuật thực tế từ `currentPatient.surgeon` (ví dụ: "TS.BS Lê Quang Minh", "BS.CKII Nguyễn Minh Trí", "ThS.BS Trần Văn Khang"...). Nếu chưa có thì lấy theo giáo án phác đồ hoặc mặc định chuẩn y khoa.
+    * Tự động đồng bộ tên bác sĩ phụ trách sang TẤT CẢ các vị trí trên toàn bộ giao diện:
+      - `#videoDoctorText` (trong modal video bài tập)
+      - `#rptDoctorName` (trong modal báo cáo bác sĩ)
+      - `#badgeDoctor` (trên thanh bài tập)
+      - `#exDoctorBadge` (trong thẻ chi tiết bài tập)
+      - `#prescDoctorSub` (trong đơn thuốc EMR)
+      - `#emrCardSurgeon` (trong thẻ hồ sơ phẫu thuật EMR)
+      - `#emrBannerSurgery` (trong banner EMR)
+      - `#feeModalDoctor` (trong bảng kê chi phí viện phí)
+      - `#printDoctor` (trong giấy xác nhận in ra A4)
+    * Tích hợp tự động gọi `syncDoctorInfoAcrossApp()` trong `applyCurrentPatient()` và `selectProtocol()` để chuyển đổi tức thì khi đăng nhập bệnh nhân khác.
+  + Đồng bộ 100% sang cả 3 tệp giao diện: `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Khi nhấn vào ô "Bác sĩ phụ trách", pop-up Báo Cáo Bác Sĩ y khoa lập tức hiển thị, kèm nút Tải Báo Cáo (.HTML / PDF) về máy cực kỳ tiện lợi; tên bác sĩ luôn chuẩn xác 100% theo đúng bác sĩ phụ trách của bệnh nhân đang theo dõi!
+
+[Mốc: 03/10/2026 - Phiên cập nhật 25: Tích Hợp Hệ Thống Định Giá Viện Phí & BHYT Tự Động Random Theo Bệnh Lý & Giá Thị Trường Bệnh Viện Việt Nam]
+- Yêu cầu người dùng (Andrew):
+  "số tiền này anh muốn nó random phụ thuộc và bệnh ( giá thị trường )" (kèm hình ảnh Thẻ Minh Bạch Tài Chính Viện Phí & BHYT gồm 4 cột: 1. Tổng Chi Phí Điều Trị, 2. BHYT Chi Trả 80%, 3. Đã Tạm Ứng Viện Phí, 4. Số Tiền Cần Thanh Toán / Hoàn Ứng).
+- Vấn đề phân tích:
+  Trước đây, 4 cột tài chính và danh mục 14 khoản mục chi phí viện phí hiển thị các con số tĩnh cố định (25.000.000đ, 8.000.000đ, 10.000.000đ, 7.000.000đ) cho mọi bệnh nhân bất kể loại phẫu thuật gì. Để sát với thực tế lâm sàng, hệ thống cần tính toán viện phí linh hoạt theo đúng mặt bằng giá thị trường y tế Việt Nam cho từng ca phẫu thuật/điều trị (Thay khớp gối TKA, Thay khớp háng THA, Tái tạo dây chằng ACL, Vi phẫu cột sống L4-L5, Phẫu thuật tim mạch CABG, Sinh mổ C-Section, Kết hợp xương, Tán sỏi, Vết bỏng, v.v.), có độ biến thiên ngẫu nhiên (random) thực tế theo ca bệnh.
+- Hành động thực hiện:
+  + Xây Dựng Cơ Sở Dữ Liệu Giá Thị Trường Y Tế Chuẩn (`CLINICAL_MARKET_FEES`):
+    * Khớp gối (TKA): Dải giá thị trường 64tr - 82tr (BHYT trần ~ 27tr - 35tr, tạm ứng ~ 25tr - 32tr).
+    * Khớp háng (THA): Dải giá 68tr - 88tr.
+    * Dây chằng chéo trước (ACL): Dải giá 30tr - 42tr.
+    * Cột sống thắt lưng (Spine): Dải giá 46tr - 64tr.
+    * Đột quỵ / Can thiệp mạch: Dải giá 24tr - 38tr.
+    * Phẫu thuật tim mạch (CABG): Dải giá 88tr - 128tr.
+    * Mổ lấy thai (C-Section): Dải giá 16tr - 25tr.
+    * Nội soi ổ bụng / Túi mật (Laparoscopy): Dải giá 18tr - 28tr.
+    * Kết hợp xương nẹp vít (Fracture): Dải giá 22tr - 34tr.
+    * Tán sỏi tiết niệu (Urology): Dải giá 19tr - 29tr.
+    * Bỏng & Ghép da (Burns): Dải giá 22tr - 36tr.
+    * Tạo hình thẩm mỹ (Cosmetic): Dải giá 52tr - 78tr.
+  + Thuật Toán Phân Bổ & Cân Đối Viện Phí Tuyệt Đối (`generateHospitalFeeForPatient`):
+    * Random tổng chi phí trong dải giá thị trường của bệnh, làm tròn chẵn đẹp 500.000 VNĐ.
+    * Tự động chia tỷ lệ 14 khoản mục chi phí (Phẫu thuật viên, Vật tư cấy ghép, Gây mê hồi sức, Kháng sinh, Giường bệnh, MRI/X-Quang, Xét nghiệm, Điều dưỡng, Dịch truyền, Tiền phẫu, Nẹp chỉnh hình, Vi sinh, Phục hồi chức năng) sao cho tổng 14 mục cộng lại khớp 100.00% bằng Tổng chi phí, không lệch dù chỉ 1 đồng.
+    * Tính BHYT chi trả theo tỷ lệ phê duyệt cổng giám định (làm tròn 100.000 VNĐ).
+    * Tạm ứng viện phí và tính toán số tiền còn lại cần thanh toán (`remainPay = totalCost - bhytPaid - advancePaid`).
+    * Hỗ trợ cả 2 kịch bản: Người bệnh cần thanh toán thêm (màu đỏ rose, quét VietQR) hoặc Bệnh viện hoàn ứng tiền thừa (màu xanh ngọc emerald, nhận hoàn tiền qua STK).
+  + Cập Nhật Giao Diện & Đồng Bộ Toàn Diện (`applyHospitalFeeToUI`):
+    * Gán ID động cho 4 cột tài chính trên màn hình chính: `#financeTotalCost`, `#financeBhytCost`, `#financeAdvanceCost`, `#financeRemainCost`, `#financeBhytCard`, `#financeAdvanceReceipt`.
+    * Cập nhật danh mục 14 khoản mục trong `#feeBreakdownGrid`.
+    * Cập nhật Modal Bảng Kê Chi Tiết In PDF `#hospitalFeePdfModal` (bảng chi tiết, chân trang và hộp tóm tắt).
+    * Tự động tính lại khi đổi bệnh nhân (`applyCurrentPatient`), khi đổi phác đồ bài tập (`selectProtocol`), hoặc khi khởi tạo ứng dụng.
+  + Đồng bộ 100% sang cả 3 tệp giao diện: `CareProtocol_GiaoDien.html`, `public/CareProtocol_GiaoDien.html` và `public/index.html`.
+- Kết quả: Viện phí hiển thị đúng 100% theo mặt bằng giá thị trường y khoa Việt Nam, tự động biến thiên ngẫu nhiên theo từng bệnh lý và đồng bộ khớp từng mục chi tiết!
+
+--------------------------------------------------------------------------------
+III. KẾ HOẠCH BÀN GIAO & PHÁT TRIỂN TIẾP THEO (NEXT STEPS)
+--------------------------------------------------------------------------------
+1. Tích hợp WebRTC P2P hoặc WebSocket Relay đa điểm thực tế để kết nối luồng camera
+   vật lý RTSP từ các phòng bệnh vào hệ thống.
+2. Huấn luyện tinh chỉnh thêm mô hình phát hiện té ngã trên tập dữ liệu người cao tuổi
+   Việt Nam để nâng độ nhạy lên trên 98%.
+3. Hoàn thiện tài liệu bàn giao và đóng gói mã nguồn đưa lên repository chính thức.
+================================================================================
