@@ -597,3 +597,23 @@ CareProtocol x Project Monitoring Model 0.2.0 - Phát triển bởi Andrew.
 Mọi tài liệu và file cấu hình trên đảm bảo hệ thống có thể tái thiết lập 100%
 trong vòng 3 phút tại bất kỳ máy tính mới nào.
 ================================================================================
+
+[GHI CHÚ CẤU HÌNH GIAO DIỆN MODAL BÀI TẬP - 2026-10-03 14:59:16]:
+- Nút chế độ bài tập: "Tập mẫu" (id="btnModeRealVideo").
+- Mặc định mở tab YouTube bác sĩ khi click "Tập mẫu".
+- Nút Chiếu thẳng (id="btnPlayerDirect") được ẩn mặc định bằng class="hidden" và style="display: none;".
+================================================================================
+
+[CẤU HÌNH CÔNG TẮC TRƯỢT MODAL BÀI TẬP - 2026-10-03 15:02:18]:
+- Component: Segmented sliding toggle với viên thuốc nền id="videoModalSliderPill".
+- Vị trí: left: 4px (chế độ Mô phỏng) và left: 50% (chế độ Tập mẫu).
+- Nút submode: videoSubmodeContainer được ẩn với display: none !important.
+================================================================================
+
+[CẤU HÌNH VIDEO BÀI TẬP CHUẨN TỪNG GIÂY - 2026-10-03 15:13:31]:
+- Cấu trúc videoData trong PROTOCOLS và PROTOCOL_DEMO_VIDEOS:
+  + embedUrl: URL YouTube Embed kèm start & end theo giây (vd: start=45&end=110).
+  + watchUrl: Link mở trên YouTube kèm tham số t=...s.
+  + videoTimestamp: Chuỗi hiển thị phân đoạn thời gian (vd: "00:45 - 01:50").
+  + videoSegmentTitle: Tên phân đoạn lâm sàng hiển thị trên video HUD.
+================================================================================

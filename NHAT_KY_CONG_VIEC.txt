@@ -540,3 +540,34 @@ III. KẾ HOẠCH BÀN GIAO & PHÁT TRIỂN TIẾP THEO (NEXT STEPS)
    Việt Nam để nâng độ nhạy lên trên 98%.
 3. Hoàn thiện tài liệu bàn giao và đóng gói mã nguồn đưa lên repository chính thức.
 ================================================================================
+
+--------------------------------------------------------------------------------
+IV. CẬP NHẬT GIAO DIỆN MODAL BÀI TẬP THEO YÊU CẦU ANH ANDREW (2026-10-03 14:59:16)
+--------------------------------------------------------------------------------
+1. Rút gọn tên tab: Đổi "Video Bác Sĩ Mẫu" thành "Tập mẫu" trên thanh chế độ modal.
+2. Tối ưu trải nghiệm: Khi người dùng bấm tab "Tập mẫu", modal tự động chuyển thẳng sang trình phát YouTube bài tập y khoa của bác sĩ.
+3. Tinh gọn giao diện: Ẩn hoàn toàn nút "Chiếu Thẳng (Không Cần YouTube)" (hidden, display: none).
+4. Rút gọn nhãn nút phụ thành "YouTube Bác Sĩ", cập nhật chỉ dẫn thông báo chân iframe y khoa.
+5. Đồng bộ toàn bộ 3 file giao diện (CareProtocol_GiaoDien.html, public/CareProtocol_GiaoDien.html, public/index.html) và kiểm tra cú pháp JS thành công.
+================================================================================
+
+--------------------------------------------------------------------------------
+V. NÂNG CẤP CÔNG TẮC TRƯỢT DẠNG VIÊN THUỐC VÀ ẨN NÚT PHỤ YOUTUBE (2026-10-03 15:02:18)
+--------------------------------------------------------------------------------
+1. Thiết kế công tắc trượt (Segmented Sliding Toggle): Chia đều 50/50 cân xứng hoàn hảo giữa "⚡ Mô Phỏng 60 FPS" và "🎬 Tập Mẫu".
+2. Tích hợp thanh trượt nền (Sliding Pill Indicator): Hiệu ứng trượt mượt mà (transition cubic-bezier 300ms), chữ không bao giờ bị rớt dòng (whitespace-nowrap).
+3. Ẩn triệt để nút đỏ phụ YouTube ("YouTube Bác Sĩ"): Toàn bộ container submode đã được ẩn hoàn toàn (display: none !important), không che khuất màn hình hoặc thanh điều khiển video YouTube.
+4. Đồng bộ 100% trên cả 3 file HTML và vượt qua kiểm tra cú pháp Node.js.
+================================================================================
+
+--------------------------------------------------------------------------------
+VI. KIỂM TRA TOÀN DIỆN VÀ GÁN LINK VIDEO BÀI TẬP CHUẨN TỪNG GIÂY (2026-10-03 15:13:31)
+--------------------------------------------------------------------------------
+1. Rà soát & chuẩn hóa toàn bộ 69 bài tập y khoa trong hệ thống:
+   - 10 phác đồ lâm sàng chính (PROTOCOLS): Gán đầy đủ videoUrl (start/end giây), youtubeWatchUrl, videoTimestamp (MM:SS), videoSegmentTitle và bác sĩ phụ trách.
+   - 25 cấu hình động học lâm sàng (PROTOCOL_DEMO_VIDEOS): Nâng cấp thành object chi tiết với đầy đủ phân đoạn đúng từng giây.
+   - 34 bài tập đề xuất phục hồi chuyên sâu (CUSTOM_WGER_LIBRARY): Rà soát 100% khớp giây giữa embedUrl và watchUrl.
+2. Tích hợp chuyển giao video trong selectWgerProposedExercise: Đảm bảo khi chọn bất kỳ bài tập nào từ thư viện Wger, video mẫu đúng giây vẫn giữ nguyên trên màn hình chính khi bấm "Xem Tập Mẫu".
+3. Chạy test suite sandbox tự động qua Node.js: Đạt 69/69 bài tập hợp lệ 100%.
+4. Đồng bộ toàn bộ 3 file HTML và kiểm tra cú pháp thành công.
+================================================================================

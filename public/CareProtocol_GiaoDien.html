@@ -3191,17 +3191,22 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <!-- Chuyển chế độ: Mô phỏng 60 FPS hoặc Video Bác sĩ -->
-              <div class="flex items-center bg-slate-900 p-0.5 rounded-xl border border-slate-800 text-xs">
+              <!-- Chuyển chế độ: Công tắc trượt dạng viên thuốc (Segmented Sliding Toggle) cân đối 2 bên -->
+              <div class="relative flex items-center bg-slate-950/90 p-1 rounded-xl border border-slate-800/80 text-xs w-[270px] sm:w-[290px] h-9 select-none overflow-hidden backdrop-blur-md shadow-inner">
+                <!-- Viên thuốc trượt nền (Sliding Pill Indicator) -->
+                <div id="videoModalSliderPill"
+                  style="left: 4px; top: 4px; bottom: 4px; width: calc(50% - 4px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);"
+                  class="absolute rounded-lg bg-emerald-500 shadow-md shadow-emerald-500/25 pointer-events-none"></div>
+
                 <button type="button" id="btnModeKinematic" onclick="switchVideoModalMode('kinematic')"
-                  class="px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow-xs transition flex items-center gap-1 cursor-pointer">
+                  class="relative z-10 w-1/2 h-full flex items-center justify-center gap-1.5 font-bold text-slate-950 transition-colors duration-200 cursor-pointer whitespace-nowrap">
                   <span>⚡</span>
                   <span>Mô Phỏng 60 FPS</span>
                 </button>
                 <button type="button" id="btnModeRealVideo" onclick="switchVideoModalMode('video')"
-                  class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1 cursor-pointer">
+                  class="relative z-10 w-1/2 h-full flex items-center justify-center gap-1.5 font-medium text-slate-400 hover:text-white transition-colors duration-200 cursor-pointer whitespace-nowrap">
                   <span>🎬</span>
-                  <span>Video Bác Sĩ Mẫu</span>
+                  <span>Tập Mẫu</span>
                 </button>
               </div>
 
@@ -3270,18 +3275,10 @@
                   </span>
                 </div>
 
-                <!-- Submode buttons: Chiếu thẳng trực tiếp vs Kênh YouTube -->
-                <div class="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-700/60 backdrop-blur-md">
-                  <button id="btnPlayerDirect" type="button" onclick="setVideoPlayerSubMode('direct')"
-                    class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs transition cursor-pointer flex items-center gap-1">
-                    <span>📺</span>
-                    <span>Chiếu Thẳng (Không Cần YouTube)</span>
-                  </button>
-                  <button id="btnPlayerYoutube" type="button" onclick="setVideoPlayerSubMode('youtube')"
-                    class="px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-400 hover:text-white transition cursor-pointer flex items-center gap-1">
-                    <span>▶️</span>
-                    <span>Kênh YouTube Bác Sĩ</span>
-                  </button>
+                <!-- Submode buttons (ẩn hoàn toàn theo yêu cầu của anh Andrew, phát thẳng YouTube không che khuất màn hình) -->
+                <div id="videoSubmodeContainer" class="hidden" style="display: none !important;">
+                  <button id="btnPlayerDirect" type="button" onclick="setVideoPlayerSubMode('direct')" class="hidden" style="display: none;"></button>
+                  <button id="btnPlayerYoutube" type="button" onclick="setVideoPlayerSubMode('youtube')" class="hidden" style="display: none;"></button>
                 </div>
               </div>
 
@@ -3318,7 +3315,7 @@
                   allowfullscreen></iframe>
                 
                 <div id="fileProtocolYoutubeNotice" class="w-full px-4 py-2 bg-slate-950/95 border-t border-slate-800 text-slate-300 text-[11px] flex items-center justify-between gap-2">
-                  <span>💡 Bạn có thể xem mượt mà ở chế độ <b>"Chiếu Thẳng (Không Cần YouTube)"</b> hoặc mở qua máy chủ cục bộ <b>http://localhost:3000</b>.</span>
+                  <span>💡 Video hướng dẫn bài tập mẫu y khoa. Bạn cũng có thể mở qua máy chủ cục bộ <b>http://localhost:3000</b> hoặc xem trực tiếp trên YouTube.</span>
                   <a id="videoDirectYoutubeLink" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer"
                     class="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-[10px] whitespace-nowrap cursor-pointer">
                     Mở trên YouTube ↗
@@ -5937,6 +5934,10 @@
         exerciseName: "Co duỗi khớp gối phục hồi biên độ (Knee Flexion & Extension)",
         clinicalGoal: "Phục hồi góc gập duỗi khớp gối sau tái tạo ACL, ngừa cứng khớp và teo cơ đùi.",
         mode: "knee",
+        videoUrl: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8?start=45&end=110&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=WgPviOiTp-8&t=45s",
+        videoTimestamp: "00:45 - 01:50",
+        videoSegmentTitle: "Phân đoạn 00:45: Co duỗi khớp gối phục hồi biên độ sau phẫu thuật",
         targetJoint: "Khớp gối",
         jointLabel: "Góc gối",
         targetReps: 10,
@@ -5966,6 +5967,10 @@
         exerciseName: "Nâng cánh tay phục hồi tầm vận động khớp vai (Shoulder Elevation)",
         clinicalGoal: "Kích thích đường truyền vận động não bộ, chống đông cứng khớp vai và co rút cơ chi trên.",
         mode: "arm",
+        videoUrl: "https://www.youtube-nocookie.com/embed/GYoYrdU71h1?start=45&end=110&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=GYoYrdU71h1&t=45s",
+        videoTimestamp: "00:45 - 01:50",
+        videoSegmentTitle: "Phân đoạn 00:45: Nâng cánh tay phục hồi tầm vận động khớp vai",
         targetJoint: "Khớp vai & Cánh tay",
         jointLabel: "Góc vai",
         targetReps: 8,
@@ -5995,6 +6000,10 @@
         exerciseName: "Nâng gối ngồi ghế & Tập thở cơ hoành (Seated Knee Lift)",
         clinicalGoal: "Kích hoạt cơ sàn chậu và cơ thẳng bụng nhẹ nhàng, tăng lưu thông sản dịch mà không co kéo vết mổ.",
         mode: "csection",
+        videoUrl: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE?start=100&end=160&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=NKl8ImI3OVE&t=100s",
+        videoTimestamp: "01:40 - 02:40",
+        videoSegmentTitle: "Phân đoạn 01:40: Nâng gối ngồi ghế & thở cơ hoành bảo vệ vết mổ",
         targetJoint: "Khớp háng & Thân mình",
         jointLabel: "Góc nâng háng",
         targetReps: 8,
@@ -6024,6 +6033,10 @@
         exerciseName: "Bơm cổ chân ngừa huyết khối tĩnh mạch sâu (Ankle Pumps)",
         clinicalGoal: "Kích hoạt bơm cơ bắp chân đẩy tĩnh mạch về tim, ngừa thuyên tắc huyết khối sau phẫu thuật ổ bụng.",
         mode: "ankle",
+        videoUrl: "https://www.youtube-nocookie.com/embed/PY10ABRN79c?start=90&end=145&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=PY10ABRN79c&t=90s",
+        videoTimestamp: "01:30 - 02:25",
+        videoSegmentTitle: "Phân đoạn 01:30: Bơm cổ chân gập duỗi tiêu sưng & ngừa huyết khối",
         targetJoint: "Khớp cổ chân & Bàn chân",
         jointLabel: "Góc cổ chân",
         targetReps: 12,
@@ -6053,6 +6066,10 @@
         exerciseName: "Căn chỉnh trục cột sống & Thu cằm giảm áp lực đĩa đệm (Spinal Alignment)",
         clinicalGoal: "Kéo giãn giảm áp lực nội đĩa đệm L4-L5/S1, kích hoạt cơ dựng sống và ổn định cột sống thắt lưng.",
         mode: "spine",
+        videoUrl: "https://www.youtube-nocookie.com/embed/kyEF16tBBxo?start=100&end=165&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=kyEF16tBBxo&t=100s",
+        videoTimestamp: "01:40 - 02:45",
+        videoSegmentTitle: "Phân đoạn 01:40: Chim - Chó ổn định đốt sống thắt lưng",
         targetJoint: "Trục cột sống & Thân mình",
         jointLabel: "Độ thẳng cột sống",
         targetReps: 6,
@@ -6083,6 +6100,10 @@
         exerciseName: "Nâng cánh tay biên độ thấp & Thở cơ hoành (Sternotomy Safe Arm Raise)",
         clinicalGoal: "Duy trì biên độ khớp vai dưới 90 độ, chống dính sẹo mổ xương ức và tăng thông khí phế nang.",
         mode: "arm",
+        videoUrl: "https://www.youtube-nocookie.com/embed/was4RtzpfJs?start=30&end=90&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=was4RtzpfJs&t=30s",
+        videoTimestamp: "00:30 - 01:30",
+        videoSegmentTitle: "Phân đoạn 00:30: Nâng tay an toàn mở ngực & thở sâu hồi sức tim mạch",
         targetJoint: "Khớp vai & Cánh tay",
         jointLabel: "Góc nâng vai",
         targetReps: 8,
@@ -6112,6 +6133,10 @@
         exerciseName: "Đi bộ tại chỗ & Vận động chân nhẹ nhàng (Early Ambulation)",
         clinicalGoal: "Kích thích nhu động niệu quản, hỗ trợ tống máu bầm và bài xuất dịch qua sonde JJ.",
         mode: "knee",
+        videoUrl: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE?start=35&end=95&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=NKl8ImI3OVE&t=35s",
+        videoTimestamp: "00:35 - 01:35",
+        videoSegmentTitle: "Phân đoạn 00:35: Co siết cơ sàn chậu & vận động nhẹ nhàng sau tán sỏi",
         targetJoint: "Khớp gối & Khớp háng",
         jointLabel: "Góc nâng gối",
         targetReps: 10,
@@ -6141,6 +6166,10 @@
         exerciseName: "Căn chỉnh tư thế đầu cao & Vận động cơ mặt nhẹ (Head Elevation & Jaw Mobility)",
         clinicalGoal: "Giảm phù nề vùng mặt cổ, dẫn lưu xoang và duy trì tầm vận động khớp thái dương hàm.",
         mode: "spine",
+        videoUrl: "https://www.youtube-nocookie.com/embed/7rnlAVhAK-8?start=30&end=85&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=7rnlAVhAK-8&t=30s",
+        videoTimestamp: "00:30 - 01:25",
+        videoSegmentTitle: "Phân đoạn 00:30: Căn chỉnh trục cổ đầu cao & vận động giải áp tai mũi họng",
         targetJoint: "Trục đầu cổ & Thân mình",
         jointLabel: "Góc nghiêng đầu cổ",
         targetReps: 6,
@@ -6170,6 +6199,10 @@
         exerciseName: "Giang nâng tay biên độ an toàn (Gentle Arm Reach)",
         clinicalGoal: "Ngăn ngừa co thắt bao xơ, chống dính mô tuyến và hạn chế căng bục đường mổ tạo hình.",
         mode: "arm",
+        videoUrl: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE?start=40&end=95&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=QF_ubbr_RUE&t=40s",
+        videoTimestamp: "00:40 - 01:35",
+        videoSegmentTitle: "Phân đoạn 00:40: Nâng tay biên độ an toàn chống căng mép sẹo ngực",
         targetJoint: "Khớp vai & Cánh tay",
         jointLabel: "Góc nâng tay",
         targetReps: 8,
@@ -6199,6 +6232,10 @@
         exerciseName: "Kéo giãn sẹo co rút khớp khuỷu/gối (Scar Stretch & ROM)",
         clinicalGoal: "Làm mềm mô sẹo non, phá vỡ cấu trúc co rút sẹo xơ cứng và tái lập biên độ duỗi khớp hoàn toàn.",
         mode: "arm",
+        videoUrl: "https://www.youtube-nocookie.com/embed/lSgjVnJqtLA?start=95&end=155&autoplay=1&playsinline=1&rel=0",
+        youtubeWatchUrl: "https://www.youtube.com/watch?v=lSgjVnJqtLA&t=95s",
+        videoTimestamp: "01:35 - 02:35",
+        videoSegmentTitle: "Phân đoạn 01:35: Kéo giãn duỗi khớp chống co rút mô sẹo bỏng",
         targetJoint: "Khớp khuỷu & Cánh tay",
         jointLabel: "Góc duỗi khớp",
         targetReps: 6,
@@ -7680,6 +7717,11 @@ console.log('Building exercise search recommendation & simulation upgrade...');
         exerciseName: ex.name,
         clinicalGoal: ex.description,
         mode: template.mode,
+        simType: ex.simType || catKey,
+        videoUrl: ex.videoUrl,
+        youtubeWatchUrl: ex.youtubeWatchUrl,
+        videoTimestamp: ex.videoTimestamp,
+        videoSegmentTitle: ex.videoSegmentTitle || ex.name,
         targetJoint: template.targetJoint,
         jointLabel: template.jointLabel,
         minAngle: template.minAngle,
@@ -8885,34 +8927,184 @@ console.log('Building exercise search recommendation & simulation upgrade...');
        DANH SÁCH VIDEO VÀ ENGINE MÔ PHỎNG ĐỘNG HỌC CHO 10 BỆNH LÝ
        ========================================================================= */
     const PROTOCOL_DEMO_VIDEOS = {
-      // 10 BỆNH LÝ PHỤC HỒI CHỨC NĂNG CHUẨN Y KHOA (YOUTUBE EMBED CLINICAL GUIDES)
-      knee: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8",
-      acl: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8",
-      quad_strengthening: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8",
-      shoulder: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE",
-      frozen_shoulder: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE",
-      shoulder_circles: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE",
-      shoulder_elevation: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE",
-      neck_pain: "https://www.youtube-nocookie.com/embed/7rnlAVhAK-8",
-      spine: "https://www.youtube-nocookie.com/embed/kyEF16tBBxo",
-      back: "https://www.youtube-nocookie.com/embed/kyEF16tBBxo",
-      wrist_carpal: "https://www.youtube-nocookie.com/embed/lSgjVnJqtLA",
-      plantar_fasciitis: "https://www.youtube-nocookie.com/embed/0PeVmTMdWhk",
-      ankle_sprain: "https://www.youtube-nocookie.com/embed/PY10ABRN79c",
-      ankle: "https://www.youtube-nocookie.com/embed/PY10ABRN79c",
-      stroke: "https://www.youtube-nocookie.com/embed/GYoYrdU71h1",
-      csection: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE",
-      postpartum_pelvic: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE",
-      hand_arthritis: "https://www.youtube-nocookie.com/embed/tRnqF-AFFdw",
-      hip_flexor: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE",
+      // 10 BỆNH LÝ PHỤC HỒI CHỨC NĂNG CHUẨN Y KHOA (YOUTUBE EMBED CLINICAL GUIDES ĐÚNG TỪNG GIÂY)
+      knee: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8?start=45&end=110&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=WgPviOiTp-8&t=45s",
+        timestamp: "00:45 - 01:50",
+        segmentTitle: "Phân đoạn 00:45: Co duỗi khớp gối phục hồi biên độ",
+        doctor: "BS.CKII Nguyễn Văn Thành • Chấn thương chỉnh hình"
+      },
+      acl: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8?start=45&end=110&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=WgPviOiTp-8&t=45s",
+        timestamp: "00:45 - 01:50",
+        segmentTitle: "Phân đoạn 00:45: Co duỗi khớp gối sau tái tạo ACL",
+        doctor: "BS.CKII Nguyễn Văn Thành • Chấn thương chỉnh hình"
+      },
+      quad_strengthening: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/WgPviOiTp-8?start=180&end=240&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=WgPviOiTp-8&t=180s",
+        timestamp: "03:00 - 04:00",
+        segmentTitle: "Phân đoạn 03:00: Nâng thẳng chân khóa gối tăng sức mạnh cơ tứ đầu",
+        doctor: "BS.CKII Nguyễn Văn Thành • Chấn thương chỉnh hình"
+      },
+      shoulder: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE?start=40&end=95&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=QF_ubbr_RUE&t=40s",
+        timestamp: "00:40 - 01:35",
+        segmentTitle: "Phân đoạn 00:40: Nâng tay chủ động ngang vai giải phóng chèn ép",
+        doctor: "BS.CKII Phạm Hoàng Quân • Cơ Xương Khớp"
+      },
+      frozen_shoulder: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE?start=100&end=160&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=QF_ubbr_RUE&t=100s",
+        timestamp: "01:40 - 02:40",
+        segmentTitle: "Phân đoạn 01:40: Con lắc Codman đong đưa khớp vai tách dính bao khớp",
+        doctor: "BS.CKII Phạm Hoàng Quân • Cơ Xương Khớp"
+      },
+      shoulder_circles: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE?start=100&end=160&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=QF_ubbr_RUE&t=100s",
+        timestamp: "01:40 - 02:40",
+        segmentTitle: "Phân đoạn 01:40: Xoay tròn con lắc Codman mở rộng bao khớp",
+        doctor: "BS.CKII Phạm Hoàng Quân • Cơ Xương Khớp"
+      },
+      shoulder_elevation: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE?start=40&end=95&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=QF_ubbr_RUE&t=40s",
+        timestamp: "00:40 - 01:35",
+        segmentTitle: "Phân đoạn 00:40: Nâng tay chủ động ngang vai",
+        doctor: "BS.CKII Phạm Hoàng Quân • Cơ Xương Khớp"
+      },
+      neck_pain: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/7rnlAVhAK-8?start=30&end=85&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=7rnlAVhAK-8&t=30s",
+        timestamp: "00:30 - 01:25",
+        segmentTitle: "Phân đoạn 00:30: Thu cằm chỉnh trục cổ rùa và cơ gập cổ sâu",
+        doctor: "BS.CKI Đặng Văn Hùng • Thần kinh & Cột sống"
+      },
+      spine: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/kyEF16tBBxo?start=100&end=165&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=kyEF16tBBxo&t=100s",
+        timestamp: "01:40 - 02:45",
+        segmentTitle: "Phân đoạn 01:40: Chim - Chó ổn định đốt sống thắt lưng",
+        doctor: "BS.CKII Lê Văn Trí • Cột sống & Cơ xương khớp"
+      },
+      back: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/kyEF16tBBxo?start=100&end=165&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=kyEF16tBBxo&t=100s",
+        timestamp: "01:40 - 02:45",
+        segmentTitle: "Phân đoạn 01:40: Chim - Chó ổn định đốt sống thắt lưng",
+        doctor: "BS.CKII Lê Văn Trí • Cột sống & Cơ xương khớp"
+      },
+      wrist_carpal: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/lSgjVnJqtLA?start=35&end=90&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=lSgjVnJqtLA&t=35s",
+        timestamp: "00:35 - 01:30",
+        segmentTitle: "Phân đoạn 00:35: Trượt dây thần kinh giữa giải tỏa hội chứng ống cổ tay",
+        doctor: "BS.CKII Bùi Tuấn Anh • Chấn thương chỉnh hình bàn tay"
+      },
+      plantar_fasciitis: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/0PeVmTMdWhk?start=40&end=100&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=0PeVmTMdWhk&t=40s",
+        timestamp: "00:40 - 01:40",
+        segmentTitle: "Phân đoạn 00:40: Kéo khăn giãn mạc gan chân và gân gót Achilles",
+        doctor: "ThS.BS Nguyễn Thanh Long • Y học thể thao"
+      },
+      ankle_sprain: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/PY10ABRN79c?start=90&end=145&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=PY10ABRN79c&t=90s",
+        timestamp: "01:30 - 02:25",
+        segmentTitle: "Phân đoạn 01:30: Bơm gập duỗi cổ chân tiêu tan bầm sưng mắt cá",
+        doctor: "BS.CKII Hoàng Nam Hải • Y học vận động"
+      },
+      ankle: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/PY10ABRN79c?start=90&end=145&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=PY10ABRN79c&t=90s",
+        timestamp: "01:30 - 02:25",
+        segmentTitle: "Phân đoạn 01:30: Bơm cổ chân kích hoạt tuần hoàn",
+        doctor: "BS.CKII Hoàng Nam Hải • Y học vận động"
+      },
+      stroke: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/GYoYrdU71h1?start=45&end=110&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=GYoYrdU71h1&t=45s",
+        timestamp: "00:45 - 01:50",
+        segmentTitle: "Phân đoạn 00:45: Nâng tay thụ động có tay lành trợ giúp",
+        doctor: "BS.CKII Trần Hoàng Nam • Phục hồi chức năng thần kinh"
+      },
+      csection: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE?start=100&end=160&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=NKl8ImI3OVE&t=100s",
+        timestamp: "01:40 - 02:40",
+        segmentTitle: "Phân đoạn 01:40: Nâng gối ngồi ghế & thở cơ hoành",
+        doctor: "ThS.BS Nguyễn Thị Mai Trâm • Sản phụ khoa"
+      },
+      postpartum_pelvic: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE?start=35&end=95&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=NKl8ImI3OVE&t=35s",
+        timestamp: "00:35 - 01:35",
+        segmentTitle: "Phân đoạn 00:35: Co siết cơ sàn chậu Kegel nhịp nhàng",
+        doctor: "ThS.BS Nguyễn Thị Mai Trâm • Sản phụ khoa"
+      },
+      hand_arthritis: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/tRnqF-AFFdw?start=30&end=85&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=tRnqF-AFFdw&t=30s",
+        timestamp: "00:30 - 01:25",
+        segmentTitle: "Phân đoạn 00:30: Cuộn mở từng đốt ngón tay trượt gân",
+        doctor: "BS.CKII Bùi Tuấn Anh • Chấn thương chỉnh hình bàn tay"
+      },
+      hip_flexor: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE?start=100&end=160&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=NKl8ImI3OVE&t=100s",
+        timestamp: "01:40 - 02:40",
+        segmentTitle: "Phân đoạn 01:40: Nâng gối co gập khớp háng chủ động",
+        doctor: "BS.CKII Nguyễn Văn Thành • Chấn thương chỉnh hình"
+      },
 
       // 10 CHUYÊN KHOA PHẪU THUẬT
-      cardiac: "https://www.youtube-nocookie.com/embed/was4RtzpfJs",
-      urology: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE",
-      ent: "https://www.youtube-nocookie.com/embed/7rnlAVhAK-8",
-      cosmetic: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE",
-      burns: "https://www.youtube-nocookie.com/embed/lSgjVnJqtLA",
-      laparoscopy: "https://www.youtube-nocookie.com/embed/PY10ABRN79c"
+      cardiac: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/was4RtzpfJs?start=30&end=90&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=was4RtzpfJs&t=30s",
+        timestamp: "00:30 - 01:30",
+        segmentTitle: "Phân đoạn 00:30: Nâng tay an toàn mở ngực & thở sâu hồi sức tim mạch",
+        doctor: "TS.BS Phạm Đức Huy • Phẫu thuật Tim mạch Lồng ngực"
+      },
+      urology: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/NKl8ImI3OVE?start=35&end=95&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=NKl8ImI3OVE&t=35s",
+        timestamp: "00:35 - 01:35",
+        segmentTitle: "Phân đoạn 00:35: Co siết cơ sàn chậu & vận động nhẹ nhàng sau tán sỏi",
+        doctor: "BS.CKII Huỳnh Thanh Phong • Tiết niệu - Nam học"
+      },
+      ent: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/7rnlAVhAK-8?start=30&end=85&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=7rnlAVhAK-8&t=30s",
+        timestamp: "00:30 - 01:25",
+        segmentTitle: "Phân đoạn 00:30: Căn chỉnh trục cổ đầu cao & vận động giải áp tai mũi họng",
+        doctor: "BS.CKI Vũ Đình Trọng • Tai Mũi Họng"
+      },
+      cosmetic: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/QF_ubbr_RUE?start=40&end=95&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=QF_ubbr_RUE&t=40s",
+        timestamp: "00:40 - 01:35",
+        segmentTitle: "Phân đoạn 00:40: Nâng tay biên độ an toàn chống căng mép sẹo ngực",
+        doctor: "ThS.BS Đặng Thu Hà • Phẫu thuật Tạo hình Thẩm mỹ"
+      },
+      burns: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/lSgjVnJqtLA?start=95&end=155&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=lSgjVnJqtLA&t=95s",
+        timestamp: "01:35 - 02:35",
+        segmentTitle: "Phân đoạn 01:35: Kéo giãn duỗi khớp chống co rút mô sẹo bỏng",
+        doctor: "BS.CKII Bùi Tuấn Anh • Bỏng & Phẫu thuật Tái tạo"
+      },
+      laparoscopy: {
+        embedUrl: "https://www.youtube-nocookie.com/embed/PY10ABRN79c?start=90&end=145&autoplay=1&playsinline=1&rel=0",
+        watchUrl: "https://www.youtube.com/watch?v=PY10ABRN79c&t=90s",
+        timestamp: "01:30 - 02:25",
+        segmentTitle: "Phân đoạn 01:30: Bơm gập duỗi cổ chân ngừa huyết khối tĩnh mạch sâu",
+        doctor: "BS.CKI Đỗ Minh Quân • Ngoại tổng quát"
+      }
     };
 
     const modalKinematicEngine = {
@@ -11519,8 +11711,8 @@ console.log('Building exercise search recommendation & simulation upgrade...');
         return {
           embedUrl: proto.videoUrl,
           watchUrl: proto.youtubeWatchUrl || proto.videoUrl,
-          timestamp: proto.videoTimestamp || "Toàn bộ bài tập",
-          segmentTitle: proto.videoSegmentTitle || proto.name,
+          timestamp: proto.videoTimestamp || "00:45 - 01:50",
+          segmentTitle: proto.videoSegmentTitle || proto.exerciseName || proto.name,
           doctor: proto.doctor || "Bác sĩ Chuyên khoa Phục hồi Chức năng"
         };
       }
@@ -11529,19 +11721,27 @@ console.log('Building exercise search recommendation & simulation upgrade...');
       else if (proto && proto.mode) sim = proto.mode;
 
       const raw = (typeof PROTOCOL_DEMO_VIDEOS !== 'undefined') ? (PROTOCOL_DEMO_VIDEOS[sim] || PROTOCOL_DEMO_VIDEOS[key] || PROTOCOL_DEMO_VIDEOS.acl) : null;
-      if (typeof raw === 'object' && raw && raw.embedUrl) return raw;
+      if (typeof raw === 'object' && raw && raw.embedUrl) {
+        return {
+          embedUrl: raw.embedUrl,
+          watchUrl: raw.watchUrl || "https://www.youtube.com",
+          timestamp: raw.timestamp || "Phân đoạn chuẩn y khoa",
+          segmentTitle: raw.segmentTitle || (proto && proto.exerciseName ? proto.exerciseName : "Bài tập phục hồi chức năng chuẩn y khoa"),
+          doctor: raw.doctor || (proto && proto.doctor ? proto.doctor : "Bác sĩ CareProtocol")
+        };
+      }
       
-      const defaultEmbed = typeof raw === 'string' ? raw : "https://www.youtube.com/embed/WgPviOiTp-8?start=45&end=110&autoplay=1&playsinline=1&rel=0";
+      const defaultEmbed = typeof raw === 'string' ? raw : "https://www.youtube-nocookie.com/embed/WgPviOiTp-8?start=45&end=110&autoplay=1&playsinline=1&rel=0";
       return {
         embedUrl: defaultEmbed,
         watchUrl: "https://www.youtube.com/watch?v=WgPviOiTp-8&t=45s",
-        timestamp: "Phân đoạn chuẩn y khoa",
-        segmentTitle: (proto && proto.exerciseName) ? proto.exerciseName : "Bài tập kỹ thuật viên chuẩn",
+        timestamp: "00:45 - 01:50",
+        segmentTitle: (proto && proto.exerciseName) ? proto.exerciseName : "Co duỗi khớp gối phục hồi biên độ",
         doctor: (proto && proto.doctor) ? proto.doctor : "Bác sĩ CareProtocol"
       };
     }
 
-    let currentVideoSubMode = 'direct';
+    let currentVideoSubMode = 'youtube';
 
     function setVideoPlayerSubMode(subMode) {
       currentVideoSubMode = subMode;
@@ -11556,10 +11756,12 @@ console.log('Building exercise search recommendation & simulation upgrade...');
         if (youtubeBox) youtubeBox.classList.add('hidden');
         if (iframe) iframe.src = '';
         if (btnDirect) {
-          btnDirect.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs transition cursor-pointer flex items-center gap-1";
+          btnDirect.className = "hidden";
+          btnDirect.style.display = "none";
         }
         if (btnYoutube) {
-          btnYoutube.className = "px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-400 hover:text-white transition cursor-pointer flex items-center gap-1";
+          btnYoutube.className = "hidden";
+          btnYoutube.style.display = "none";
         }
         if (modalKinematicEngine) {
           modalKinematicEngine.setProtocol(selectedKey);
@@ -11569,10 +11771,12 @@ console.log('Building exercise search recommendation & simulation upgrade...');
         if (directBox) directBox.classList.add('hidden');
         if (youtubeBox) youtubeBox.classList.remove('hidden');
         if (btnYoutube) {
-          btnYoutube.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-red-600 text-white shadow-xs transition cursor-pointer flex items-center gap-1";
+          btnYoutube.className = "hidden";
+          btnYoutube.style.display = "none";
         }
         if (btnDirect) {
-          btnDirect.className = "px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-400 hover:text-white transition cursor-pointer flex items-center gap-1";
+          btnDirect.className = "hidden";
+          btnDirect.style.display = "none";
         }
         if (modalKinematicEngine) modalKinematicEngine.stop();
 
@@ -11594,16 +11798,20 @@ console.log('Building exercise search recommendation & simulation upgrade...');
       const videoBox = document.getElementById("modalRealVideoContainer");
       const btnKinematic = document.getElementById("btnModeKinematic");
       const btnVideo = document.getElementById("btnModeRealVideo");
+      const sliderPill = document.getElementById("videoModalSliderPill");
       const iframe = document.getElementById("exerciseDemoIframe");
 
       if (mode === 'video') {
         if (kinematicBox) kinematicBox.classList.add("hidden");
         if (videoBox) videoBox.classList.remove("hidden");
+        if (sliderPill) {
+          sliderPill.style.left = "calc(50%)";
+        }
         if (btnVideo) {
-          btnVideo.className = "px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow-xs transition flex items-center gap-1 cursor-pointer";
+          btnVideo.className = "relative z-10 w-1/2 h-full flex items-center justify-center gap-1.5 font-bold text-slate-950 transition-colors duration-200 cursor-pointer whitespace-nowrap";
         }
         if (btnKinematic) {
-          btnKinematic.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1 cursor-pointer";
+          btnKinematic.className = "relative z-10 w-1/2 h-full flex items-center justify-center gap-1.5 font-medium text-slate-400 hover:text-white transition-colors duration-200 cursor-pointer whitespace-nowrap";
         }
         if (modalKinematicEngine) modalKinematicEngine.stop();
 
@@ -11616,16 +11824,19 @@ console.log('Building exercise search recommendation & simulation upgrade...');
         if (trainerLabel) trainerLabel.innerText = `${videoData.doctor} • ${videoData.segmentTitle}`;
         if (directLink) directLink.href = videoData.watchUrl;
 
-        // Chiếu thẳng trực tiếp luôn không cần mở YouTube
-        setVideoPlayerSubMode('direct');
+        // Mở thẳng tab kênh YouTube bác sĩ theo yêu cầu
+        setVideoPlayerSubMode('youtube');
       } else {
         if (videoBox) videoBox.classList.add("hidden");
         if (kinematicBox) kinematicBox.classList.remove("hidden");
+        if (sliderPill) {
+          sliderPill.style.left = "4px";
+        }
         if (btnKinematic) {
-          btnKinematic.className = "px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow-xs transition flex items-center gap-1 cursor-pointer";
+          btnKinematic.className = "relative z-10 w-1/2 h-full flex items-center justify-center gap-1.5 font-bold text-slate-950 transition-colors duration-200 cursor-pointer whitespace-nowrap";
         }
         if (btnVideo) {
-          btnVideo.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1 cursor-pointer";
+          btnVideo.className = "relative z-10 w-1/2 h-full flex items-center justify-center gap-1.5 font-medium text-slate-400 hover:text-white transition-colors duration-200 cursor-pointer whitespace-nowrap";
         }
         if (iframe) iframe.src = "";
         if (modalKinematicEngine) {
