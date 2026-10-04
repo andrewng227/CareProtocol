@@ -7,3 +7,6 @@ out
 npm-debug.log*
 
 scratch/
+
+HUONG_DAN_*.txt
+Y_TUONG_*.txt

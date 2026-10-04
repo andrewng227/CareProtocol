@@ -273,7 +273,10 @@ TÔNG GIỌNG VÀ PHONG CÁCH TƯ VẤN (NGHIÊM TÚC, CHUẨN MỰC Y KHOA & TE
     res.writeHead(200, {
       'Content-Type': MIME_TYPES[ext] || 'text/html; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
-      'Referrer-Policy': 'strict-origin-when-cross-origin'
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     });
     fs.createReadStream(finalFile).pipe(res);
   } else {
