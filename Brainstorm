@@ -1,0 +1,856 @@
+Mình đã đọc khá sâu toàn bộ nội dung mà website CareProtocol đang expose, từ patient flow, AI rehabilitation, AI bác sĩ, fall detection, EMR, dashboard bệnh viện, thuốc, viện phí, FHIR cho tới phần Solana. Và mình nói thẳng: **đây là một project có tham vọng rất lớn, nhiều thứ để demo, nhưng chính vì tham vọng quá lớn nên cũng có vài điểm rất dễ bị giám khảo “đánh” nếu team không giải thích được implementation thật.**
+
+![Image](https://images.openai.com/static-rsc-4/2WUsuJJYGizxadWj14sEQaUZNqS4bzT4JaQWNN3hyLunN_VG7gKhbOu5Ov9KvVZt14xRbsmP_rOJrgdj4PRss66chFODRx0PjrpkAYkhI2HeIhF9xwSq8SCl-oSdAsKAU7uqo0zBTn7D0Qps3XAcZwxkyiti4qxWSrW5JTXgucDEc3tSHkMcEek-byMfkZbi?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/braPFUXKcrpIVSwd5llqd1fEs8gjntgdN5cC-JSlkyuxTKfh682-0n6kGRUu8k6X7UEzdWCdyYqAG5wm3pT5aYe2Y_l3nYnThMEP-DtYBgK_JZYGQRhrJz_XWmlgabnfMFVM0EeLgkgmVwwed79q5pM9jcxKdrCOvOG8f9-7J-KgYNhSzvIDYnXsHvfUyzX_?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/LFSAhbFPdGt57MixqD1UjMC-eSjF6rM0-WXbE50J2Spj6mSI6SGrIR30eUIpqoB6rOg4TCqBbX76TXPsn0Ff-OUjLeKMrXUejhlCjJdtSJ5LgwCd04HNhMnzK0U4CiQ7m9N1i5zxWd_y0B1LgDNVnkXGabh7m3aPGv50bLOcQua0rBDAJcdWgFavVmpYmDAp?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/k0vw7jWjVS9JrswCUla_StkTY0uB1sBi5KGxoAYlEqeFKxNA79-CCdSzoAigzfB6n_i22o5FsJ4cDukII0tdDuGMiRTR8EEMzGQegdxk-raOXPDtiF1de3O_nqCQQBVP8mJOyQoc_s56cobA92bU25d1aFOYTTeEJNDC9a_7ydXd3jXYIzm90aw-PTlMNr9r?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/dNGJkV2AJEnJ6QMARzd3HoA0dYtWPkJi2dUDMk89uxTeZQPvhl4ASSUFekVEg9cE2gf55yao8YpvsZo9pWGr5oQG21R8Juiob5DbnMlFUkmhMs8JS2ShHbmwG3RhS8q6DfVE-TPeuCUkQRhdMgtaNQMqci6GEEzkopYHa7gJ5CHdAGOBzdHLiu2B0N3dzSBg?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/7wHHVidlZBw-v4kbM3bAAixwi9-Pogq3gsmCNqHjjiiNbKKZJY6LMRvZoAMVolTEWCPjbg90w8WgdkOAo9KujrSyqzuz1sdmacbxApgqIt8jqOM7au0COfDr93wDCIFrEicdXqR2xHG6sBesqDW9oo7TxUH-FD9QGXqCfUDTi9XJAW3KrR1Ldzk77x-GlJUe?purpose=fullsize)
+
+# 1. Trước hết: CareProtocol thực chất là gì?
+
+Nếu bỏ hết những từ như AI, Blockchain, FHIR, MediaPipe, Solana... đi thì **bản chất của CareProtocol là:**
+
+> **Một hệ thống theo dõi và hỗ trợ bệnh nhân trong giai đoạn phục hồi sau phẫu thuật, kết nối bệnh nhân – AI – bác sĩ – bệnh viện, nhằm biến quá trình hậu phẫu từ “về nhà rồi tự tập/tự uống thuốc/tự theo dõi” thành một quá trình được theo dõi liên tục.**
+
+Website đang xây dựng một hệ thống gồm nhiều lớp:
+
+**Bệnh nhân**
+→ tập phục hồi
+→ camera AI theo dõi động tác
+→ ghi nhận ROM/reps
+→ nhật ký vết mổ
+→ thuốc
+→ đau/VAS
+→ Voice SOS
+
+↓
+
+**AI Clinical Assistant**
+
+↓
+
+**Bác sĩ**
+
+→ xem tiến trình
+→ xem báo cáo
+→ điều chỉnh phác đồ
+→ kê thuốc
+→ xác nhận xuất viện
+
+↓
+
+**Bệnh viện**
+
+→ dashboard
+→ EMR/HIS
+→ FHIR
+→ giám sát bệnh nhân
+→ quản lý ca.
+
+Website mô tả đúng flow này khá rõ: bệnh nhân chọn bài tập, kết nối ví, tập trước camera rồi xác nhận hoàn thành; đồng thời dữ liệu phục hồi được tổng hợp thành báo cáo cho bác sĩ. ([CareProtocol][1])
+
+---
+
+# 2. Mục đích lớn nhất của dự án
+
+Theo mình, **đừng pitch CareProtocol là “AI bác sĩ”**.
+
+Đó là cách pitch dễ gây nguy hiểm nhất.
+
+Hãy pitch nó là:
+
+> **Remote Post-Operative Recovery Monitoring Platform**
+
+hay tiếng Việt:
+
+> **Nền tảng giám sát và hỗ trợ phục hồi hậu phẫu từ xa.**
+
+AI chỉ là **engine**, không phải toàn bộ sản phẩm.
+
+### Problem mà CareProtocol muốn giải quyết
+
+Sau khi bệnh nhân phẫu thuật:
+
+* bác sĩ không thể quan sát bệnh nhân 24/7;
+* bệnh nhân có thể tập sai;
+* bệnh nhân có thể quên thuốc;
+* bệnh nhân có thể không tuân thủ phác đồ;
+* bệnh nhân có thể không biết khi nào triệu chứng trở nên nguy hiểm;
+* bác sĩ khó có được dữ liệu liên tục giữa các lần tái khám.
+
+CareProtocol muốn tạo ra một **digital recovery loop**:
+
+> **Observe → Analyze → Alert → Record → Doctor Review → Adjust → Verify**
+
+Đây mới là **linh hồn của project**.
+
+---
+
+# 3. Cái hay nhất của project nằm ở đâu?
+
+Theo mình có **3 điểm rất đáng giá**.
+
+## A. AI Motion Guard
+
+Website cho thấy hệ thống sử dụng camera để theo dõi chuyển động, đo góc khớp, đếm repetition và phát hiện các vấn đề như compensation. ([CareProtocol][1])
+
+Ví dụ website mô tả:
+
+> Camera → skeleton → joint angle → ROM → rep → feedback.
+
+Đây là một use case **AI + Computer Vision có lý do**.
+
+Không phải:
+
+> “AI chatbot để hỏi bệnh.”
+
+Mà là:
+
+> **AI nhìn thấy một hành vi vật lý mà phần mềm thông thường không thể nhìn thấy.**
+
+Đây là phần technical story rất tốt.
+
+---
+
+# 4. AI Vision thứ hai: vết mổ
+
+Website còn có:
+
+> Chụp ảnh vết mổ → AI Vision → theo dõi thay đổi → hỗ trợ phát hiện dấu hiệu bất thường.
+
+Báo cáo của hệ thống cũng hiển thị phần “Gemini Vision” và tình trạng vết mổ. ([CareProtocol][1])
+
+Về mặt concept:
+
+**Image → Computer Vision → longitudinal comparison**
+
+rất hợp với bài toán hậu phẫu.
+
+Nhưng đây cũng là **một trong những điểm nguy hiểm nhất**.
+
+Vì nếu team nói:
+
+> “AI phát hiện nhiễm trùng.”
+
+thì giám khảo có thể lập tức hỏi:
+
+> Dataset đâu? Ground truth đâu? Accuracy đâu? Sensitivity/specificity đâu? Validation ở bệnh nhân thật đâu?
+
+Trong khi nếu nói:
+
+> **“AI hỗ trợ flag các dấu hiệu hình ảnh bất thường để bác sĩ xem xét, không tự chẩn đoán.”**
+
+thì hợp lý hơn rất nhiều.
+
+Website thực tế cũng có disclaimer rằng hệ thống không tự chẩn đoán và không thay thế đánh giá lâm sàng. ([CareProtocol][1])
+
+**Câu này nên giữ cực kỳ rõ trong sản phẩm và pitch.**
+
+---
+
+# 5. AI thứ ba: Clinical Copilot
+
+Đây là lớp:
+
+**Patient data**
++
+**Pain**
++
+**Exercise telemetry**
++
+**Wound image**
++
+**Medication**
++
+**Recovery timeline**
+
+↓
+
+**AI Clinical Copilot**
+
+↓
+
+**Summary / suggestion**
+
+↓
+
+**Doctor decision**
+
+Website có hẳn phần AI Clinical Copilot & Triage cho bác sĩ. ([CareProtocol][1])
+
+Cái này có giá trị hơn chatbot thông thường.
+
+Bởi vì nếu làm đúng, AI không chỉ trả lời:
+
+> “Tôi đau thì phải làm sao?”
+
+mà có thể nói:
+
+> “Trong 7 ngày qua ROM tăng từ X → Y, adherence Z%, pain VAS..., có dấu hiệu..., đây là các điểm bác sĩ nên xem xét.”
+
+Đó mới là **clinical intelligence layer**.
+
+---
+
+# 6. Fall Detection là gì?
+
+Website có thêm một module khá tham vọng:
+
+**Camera**
+
+↓
+
+**Pose estimation**
+
+↓
+
+**Kinematics**
+
+↓
+
+**Fall detection**
+
+↓
+
+**SOS**
+
+Website mô tả MediaPipe/YOLOv8-Pose, velocity, body angle, immobility và cảnh báo té ngã. ([CareProtocol][1])
+
+Đây là một technical demo rất dễ gây ấn tượng.
+
+Nhưng cũng là chỗ giám khảo có thể hỏi:
+
+> “Mô hình thật chạy ở đâu?”
+
+> “YOLOv8 thật hay mock?”
+
+> “18ms đo trên hardware nào?”
+
+> “False positive rate?”
+
+> “False negative rate?”
+
+> “Có dataset fall detection không?”
+
+> “Nếu camera mất kết nối?”
+
+Vì vậy **đừng nói những con số trên website là benchmark thực tế nếu team chưa đo thật**.
+
+---
+
+# 7. Vậy Solana dùng để làm gì?
+
+Đây mới là câu hỏi quan trọng nhất đối với cuộc thi của bạn.
+
+**ĐỪNG trả lời:**
+
+> “Để lưu bệnh án lên blockchain.”
+
+Đó là câu trả lời rất dễ bị đánh.
+
+Tại sao?
+
+Vì **medical record không nên đưa toàn bộ dữ liệu nhạy cảm lên public blockchain.**
+
+Cách giải thích tốt hơn là:
+
+> **CareProtocol sử dụng Solana như một lớp verification / provenance / integrity cho các mốc dữ liệu và hành động quan trọng, chứ không dùng blockchain làm database cho toàn bộ bệnh án.**
+
+Ví dụ:
+
+**Medical data**
+
+→ lưu ở hệ thống healthcare/EMR phù hợp
+
+nhưng:
+
+**Doctor approved recovery milestone**
+
+→ hash / proof
+
+→ Solana
+
+→ tạo timestamp/verifiable record.
+
+Website hiện mô tả việc bác sĩ ký phê duyệt phác đồ và ghi dữ liệu/hash lên Solana; nó cũng trình bày Solana như một lớp “audit” cho hồ sơ. ([CareProtocol][1])
+
+**Đây chính là câu chuyện blockchain mà team nên bảo vệ.**
+
+---
+
+# 8. Tại sao không dùng database?
+
+Đây là câu hỏi mình gần như chắc chắn sẽ chuẩn bị cho team.
+
+Bạn nên trả lời theo hướng:
+
+> Database dùng để lưu và vận hành dữ liệu nghiệp vụ.
+>
+> Blockchain dùng để tạo một lớp bằng chứng độc lập rằng một milestone/record quan trọng đã được xác nhận tại một thời điểm và nội dung đó không bị âm thầm thay đổi sau này.
+
+Tức là:
+
+**Database = operational data**
+
+**Blockchain = verifiable provenance**
+
+Đây là architecture hợp lý hơn nhiều so với:
+
+> “Blockchain là database.”
+
+---
+
+# 9. FHIR trong dự án để làm gì?
+
+Website có nhắc tới:
+
+**HL7 FHIR R4**
+
+và các resource như:
+
+* CarePlan
+* Observation
+* Procedure
+
+để tích hợp với hệ thống bệnh viện. ([CareProtocol][1])
+
+Ý tưởng ở đây là:
+
+> CareProtocol không muốn trở thành một app độc lập tách khỏi bệnh viện.
+
+Mà muốn trở thành:
+
+**Patient App**
+
+↕️
+
+**CareProtocol**
+
+↕️
+
+**Hospital EMR/HIS**
+
+FHIR là một chuẩn interoperability để các hệ thống healthcare trao đổi dữ liệu có cấu trúc.
+
+Đây là một điểm **rất tốt về architecture story** nếu team thật sự implement được.
+
+---
+
+# 10. Tại sao project có nhiều thứ đến vậy?
+
+Mình nhìn website thì thấy CareProtocol đang cố giải quyết **toàn bộ hành trình hậu phẫu**:
+
+### Trước / trong quá trình điều trị
+
+* EMR
+* phác đồ
+* bác sĩ
+* bệnh viện
+
+### Sau phẫu thuật
+
+* exercise
+* ROM
+* pain
+* medication
+* wound
+
+### Safety
+
+* fall detection
+* Voice SOS
+
+### AI
+
+* Motion AI
+* Vision AI
+* Clinical Copilot
+
+### Hospital
+
+* dashboard
+* RTM
+* FHIR
+
+### Trust
+
+* Solana
+* on-chain verification
+
+### Financial
+
+* viện phí
+* BHYT
+
+Website thực sự chứa rất nhiều module như vậy. ([CareProtocol][1])
+
+---
+
+# 11. Nhưng đây cũng chính là điểm yếu lớn nhất
+
+Mình nói thẳng:
+
+## **CAREPROTOCOL ĐANG CÓ NGUY CƠ “LÀM QUÁ NHIỀU”.**
+
+Bạn đang có:
+
+**AI rehabilitation**
+
+* **AI wound analysis**
+
+* **AI chatbot**
+
+* **fall detection**
+
+* **Voice SOS**
+
+* **medication**
+
+* **EMR**
+
+* **FHIR**
+
+* **BHYT**
+
+* **hospital dashboard**
+
+* **Solana**
+
+* **digital discharge**
+
+* **financial reconciliation**
+
+* **nutrition**
+
+...
+
+Nếu tôi là giám khảo, tôi sẽ hỏi:
+
+> **“Rốt cuộc technical core của các bạn là gì?”**
+
+Nếu team trả lời không rõ, project sẽ bị loãng.
+
+---
+
+# 12. Theo mình, technical core nên là cái này
+
+Mình sẽ gom toàn bộ project thành:
+
+# **AI Recovery Verification Loop**
+
+```text
+Patient
+   ↓
+Doctor-defined Recovery Plan
+   ↓
+AI observes recovery
+   ↓
+┌─────────────────────────┐
+│ Motion AI               │
+│ Wound Vision AI         │
+│ Pain / Medication       │
+│ Safety / Fall Detection │
+└─────────────────────────┘
+   ↓
+Recovery Telemetry
+   ↓
+AI Clinical Copilot
+   ↓
+Doctor Review
+   ↓
+Approved Milestone
+   ↓
+Hash / Proof
+   ↓
+Solana
+   ↓
+Verifiable Recovery Record
+```
+
+**Đây mới là kiến trúc mà mình nghĩ team nên kể.**
+
+---
+
+# 13. Nếu giám khảo hỏi “Tại sao cần AI?”
+
+Câu trả lời:
+
+> “Vì recovery có những tín hiệu mà dữ liệu form thông thường không thể capture được. Camera có thể quan sát chuyển động và ROM; hình ảnh có thể theo dõi thay đổi của vết mổ; AI có thể tổng hợp các tín hiệu theo thời gian thành recovery telemetry để bác sĩ review.”
+
+Đừng nói:
+
+> “AI giúp bệnh nhân.”
+
+Quá chung chung.
+
+---
+
+# 14. Nếu hỏi “Tại sao cần blockchain?”
+
+Câu trả lời:
+
+> “Chúng em không đưa medical data nhạy cảm lên blockchain. CareProtocol sử dụng Solana cho verification/provenance của những milestone quan trọng, ví dụ bác sĩ xác nhận một recovery milestone. Dữ liệu y tế vẫn nằm ở lớp lưu trữ phù hợp; blockchain chỉ giữ bằng chứng có thể kiểm chứng.”
+
+**Câu này cực kỳ quan trọng.**
+
+---
+
+# 15. Nếu hỏi “Tại sao không dùng database?”
+
+> “Database giải quyết storage và querying. Nhưng database nằm trong trust boundary của hệ thống. Với những milestone cần chứng minh rằng bản ghi đã được bác sĩ xác nhận tại một thời điểm và không bị thay đổi âm thầm, chúng em thêm một lớp cryptographic verification bằng Solana.”
+
+Đây là một câu trả lời **có chiều sâu hơn rất nhiều**.
+
+---
+
+# 16. Khả năng thắng theo rubric của bạn
+
+Bây giờ mình sẽ chấm **chỉ dựa trên những gì website chứng minh được**, chứ không mặc định rằng mọi feature trên website đều là implementation thật.
+
+| Tiêu chí                                   |     Max | Đánh giá hiện tại |
+| ------------------------------------------ | ------: | ----------------: |
+| Technical Difficulty & Depth               |      30 |         **24/30** |
+| Architecture & Smart Contract Quality      |      25 |         **17/25** |
+| Solana Stack / Composability / Performance |      25 |         **18/25** |
+| Evidence / Documentation / Reproducibility |      20 |         **10/20** |
+| **TOTAL**                                  | **100** |        **69/100** |
+
+### Nhưng:
+
+**Potential: ~85–90/100**
+
+nếu team chứng minh được implementation thật.
+
+Vì website hiện tại **cho thấy một concept rất rộng**, nhưng một giám khảo kỹ thuật sẽ muốn biết:
+
+> “Cái nào thực sự chạy?”
+
+> “Cái nào là simulation?”
+
+> “Smart contract nằm ở đâu?”
+
+> “GitHub đâu?”
+
+> “Transaction thật đâu?”
+
+> “Benchmark đâu?”
+
+> “Test đâu?”
+
+> “Reproduce như thế nào?”
+
+UniHackFest mô tả Technical Build Track theo hướng rất rõ: cần functional Solana program trên Devnet, wallet connection, frontend setup, Explorer-verifiable transactions và code quality. ([UniHackfest][2])
+
+---
+
+# 17. Điểm mình thích nhất của project
+
+**Không phải chatbot.**
+
+**Không phải dashboard.**
+
+**Không phải giao diện.**
+
+Mà là:
+
+> ### Camera-based recovery telemetry + Doctor verification + Solana provenance.
+
+Nếu team làm **3 thứ này thật sâu**, project sẽ có một technical story rất mạnh.
+
+---
+
+# 18. Điểm mình lo nhất
+
+Có **5 quả bom** mình sẽ xử lý ngay.
+
+### 🔴 1. Medical claims
+
+Website hiện tại có những câu rất mạnh như:
+
+> “phát hiện sớm dấu hiệu nhiễm trùng”
+
+> “không xuất hiện dấu hiệu DVT”
+
+> “chuẩn pháp lý”
+
+> “giấy xuất viện điện tử chuẩn pháp lý”
+
+Những claim kiểu này rất nguy hiểm nếu không có validation/clinical evidence.
+
+Nên đổi mindset thành:
+
+> **AI-assisted monitoring / risk flagging / decision support**
+
+chứ không phải:
+
+> **AI diagnosis.**
+
+---
+
+### 🔴 2. Fake vs real evidence
+
+Website có rất nhiều con số:
+
+* 96.4%
+* 18ms
+* 4.8 Mbps
+* 88% quality
+* 84.2% bed capacity
+* 96.8% discharge compliance
+* 4.9/5 CSAT
+
+Nếu đây là **demo data**, phải nói rõ:
+
+> **Simulated Demo Data**
+
+Nếu không, giám khảo có thể hỏi:
+
+> “Dataset và experiment của 96.4% ở đâu?”
+
+Và lúc đó rất khó.
+
+---
+
+### 🔴 3. Solana evidence
+
+Website đang thể hiện nhiều transaction/hash và cả phần “Solana Blockchain Audit Mainnet-Beta”, trong khi phần kết nối ví lại ghi Devnet. ([CareProtocol][1])
+
+Mình đã kiểm tra link Explorer mà website cung cấp: nó trỏ tới **Solana Explorer Devnet**. ([Solana Explorer][3])
+
+Team nên thống nhất **một network rõ ràng cho demo**, và mọi transaction quan trọng phải là transaction thật có thể verify.
+
+---
+
+### 🔴 4. Privacy
+
+Website đang hiển thị dữ liệu cực kỳ nhạy cảm:
+
+* tên bệnh nhân
+* tuổi
+* số điện thoại
+* BHYT
+* địa chỉ
+* người thân
+* bệnh án
+* phẫu thuật
+
+Ví dụ website hiện expose cả thông tin bệnh nhân và địa chỉ trong nội dung trang. ([CareProtocol][1])
+
+**Đối với production thật: đây là vấn đề nghiêm trọng.**
+
+Demo có thể dùng synthetic data, nhưng phải nói rất rõ:
+
+> **All patient data shown in this demo is synthetic / simulated.**
+
+---
+
+# 19. Một vấn đề nữa: UI
+
+Website có **rất nhiều tính năng**, nhưng UX đang có dấu hiệu giống:
+
+> **“Mission Control Dashboard”**
+
+hơn là một sản phẩm y tế dễ dùng.
+
+Bệnh nhân 58 tuổi vừa phẫu thuật không nên phải hiểu:
+
+* Solana
+* blockchain
+* FHIR
+* ROM
+* MediaPipe
+* AI telemetry
+* Merkle Root
+
+Người bệnh chỉ cần thấy:
+
+> **Hôm nay bạn cần làm gì?**
+
+> **Bạn đang phục hồi tốt đến đâu?**
+
+> **Có vấn đề gì cần chú ý?**
+
+> **Bấm đây để gọi trợ giúp.**
+
+Còn những thứ như blockchain/FHIR/AI model nên nằm trong **Doctor / Hospital / Technical view**.
+
+Đây là một cơ hội UX rất lớn.
+
+---
+
+# 20. Nếu mình là bạn, mình sẽ chia sản phẩm thành 3 màn hình
+
+### PATIENT
+
+```text
+┌──────────────────────────┐
+│ Chào chị Hà              │
+│ Ngày thứ 3 sau phẫu thuật│
+│                          │
+│ Recovery: 72%            │
+│                          │
+│ 🎯 Việc cần làm hôm nay  │
+│                          │
+│ [ Bắt đầu bài tập ]      │
+│                          │
+│ 💊 Thuốc  3/4            │
+│ 🩹 Vết mổ  Bình thường    │
+│                          │
+│ 🚨 [ CẦN TRỢ GIÚP ]      │
+└──────────────────────────┘
+```
+
+### DOCTOR
+
+```text
+Patient
+ ↓
+Recovery score
+ ↓
+ROM trend
+ ↓
+Pain trend
+ ↓
+Exercise adherence
+ ↓
+Wound flags
+ ↓
+AI summary
+ ↓
+Doctor decision
+ ↓
+Sign milestone
+ ↓
+Solana verification
+```
+
+### HOSPITAL
+
+```text
+Patients
+ ↓
+Risk queue
+ ↓
+Fall alerts
+ ↓
+Recovery alerts
+ ↓
+FHIR / EMR
+ ↓
+Audit
+```
+
+**Đây sẽ làm project dễ hiểu hơn rất nhiều.**
+
+---
+
+# 21. Khả năng thắng của mình đánh giá thế nào?
+
+Nếu **chỉ nhìn website hiện tại**:
+
+### Ý tưởng:
+
+**9/10**
+
+### Ambition:
+
+**10/10**
+
+### Demo wow factor:
+
+**9/10**
+
+### Technical potential:
+
+**9/10**
+
+### UX hiện tại:
+
+**7/10**
+
+### Technical evidence:
+
+**chưa đủ để kết luận**
+
+### Risk:
+
+**cao**
+
+### Khả năng cạnh tranh:
+
+**Có.**
+
+### Khả năng thắng:
+
+**Có thể rất mạnh — nhưng phụ thuộc cực lớn vào việc team chứng minh cái gì thực sự chạy.**
+
+Và đây là điểm mình muốn bạn nhớ:
+
+> **CareProtocol không thua vì ý tưởng yếu. CareProtocol có nguy cơ thua vì “nói quá nhiều thứ nhưng không chứng minh đủ sâu một thứ”.**
+
+---
+
+# 22. Nếu mình là giám khảo, câu hỏi đầu tiên mình sẽ hỏi
+
+> **“Các bạn hãy chỉ cho tôi một flow duy nhất từ lúc bệnh nhân tập → AI ghi nhận → bác sĩ xem → bác sĩ xác nhận → Solana ghi nhận bằng chứng. Tôi muốn thấy toàn bộ flow chạy live.”**
+
+Nếu team làm được flow này **trơn tru**, đây sẽ là demo cực mạnh.
+
+Ví dụ:
+
+**Patient**
+
+→ Connect wallet
+
+→ Start knee exercise
+
+→ Camera detects pose
+
+→ ROM = 92°
+
+→ 10 reps completed
+
+→ Session signed
+
+→ Recovery milestone generated
+
+→ Doctor dashboard receives it
+
+→ Doctor approves
+
+→ Hash generated
+
+→ Solana transaction
+
+→ Explorer
+
+→ Patient gets **Verified Recovery Milestone**
+
+**Đây chính là “killer demo”.**
+
+---
+
+## Kết luận của mình
+
+Nếu phải giải thích CareProtocol cho **chính bạn**, mình sẽ nói đúng một câu:
+
+> **CareProtocol là nền tảng AI theo dõi phục hồi hậu phẫu từ xa, dùng computer vision để biến quá trình tập luyện và các dấu hiệu phục hồi thành dữ liệu có thể theo dõi, dùng AI để hỗ trợ bác sĩ ra quyết định, và dùng Solana như lớp xác thực nguồn gốc cho các mốc phục hồi quan trọng.**
+
+Đó là **core**.
+
+Còn:
+
+**FHIR, EMR, medication, wound, fall detection, Voice SOS, dashboard, BHYT...**
+
+là những lớp mở rộng xung quanh core đó. Website hiện tại đang thể hiện gần như toàn bộ các lớp này. ([CareProtocol][1])
+
+
+[1]: https://care-protocol-unihackfest.vercel.app/ "CareProtocol — Trợ lý phục hồi hậu phẫu"
+[2]: https://unihackfest.vn/?utm_source=chatgpt.com "UniHackfest — Build real AI & Web3 products in 14 weeks"
+[3]: https://explorer.solana.com/?cluster=devnet "Explorer | Solana"
