@@ -4,6 +4,8 @@ const path = require('path');
 const root = __dirname;
 const copies = [
   { src: 'CareProtocol_GiaoDien.html', dst: ['public/CareProtocol_GiaoDien.html', 'public/index.html'] },
+  { src: 'CareProtocol_DonGian.html', dst: ['public/CareProtocol_DonGian.html'] },
+  { src: 'CareProtocol_Hopita.html', dst: ['public/CareProtocol_Hopita.html'] },
   { src: 'google_female_voice_pack.js', dst: ['public/google_female_voice_pack.js'] },
   { src: 'logo.png', dst: ['public/logo.png'] },
 ];
