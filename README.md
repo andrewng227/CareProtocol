@@ -18,17 +18,6 @@
 
 ---
 
-## 📑 Bảng Đối Chiếu 4 Tiêu Chí Chấm Giải (Hackathon Criteria Matrix)
-
-| Tiêu Chí Chấm Điểm | Trọng Số | Trọng Tâm Đột Phá Của CareProtocol | Minh Chứng Mã Nguồn & Bằng Chứng |
-|---|---|---|---|
-| **1. Technical Difficulty & Depth** | **30 Điểm** | • Edge AI Pose 33 điểm khớp không cảm biến (Zero-Hardware)<br>• Động học Té ngã 2 pha triệt tiêu 100% False Alarm<br>• Đo run cơ & vi dao động mỏi thần kinh cơ 7.5 - 12 Hz<br>• Vệ sĩ chống ăn gian tư thế & bù trừ trục hông/cột sống<br>• Face ID & Vùng giường Bed-Zone ROI & Cảnh báo rời giường sớm (Bed-Exit) | `CareProtocol_GiaoDien.html`<br>`detectFallKinematics`<br>`detectDoctorWebcamFaces`<br>`window.MonitoringSystem` |
-| **2. Architecture & Smart Contract Quality** | **25 Điểm** | • Kiến trúc Hybrid Edge-AI & Immutable State Proof<br>• Bảo mật y tế chuẩn HIPAA (100% hình ảnh xử lý on-device)<br>• Cây Merkle Tree băm mật mã SHA-256 Web Crypto API<br>• Giao thức Proof-of-Rehab bảo vệ tính toàn vẹn dữ liệu lâm sàng | `lib/solana/`<br>`server.js`<br>Standard Schema `CareProtocol.v1` |
-| **3. Solana Stack, Composability & Performance** | **25 Điểm** | • Tích hợp `@solana/web3.js` & ví Phantom<br>• Xác nhận giao dịch tức thì (< 1s), chi phí siêu rẻ (~0.000005 SOL)<br>• Chuẩn hóa dữ liệu tương thích quốc tế HL7 FHIR<br>• Khả năng mở rộng DeSci & Bảo hiểm y tế tham số phi tập trung | Transaction Signature tại Slot `#284192044`<br>Devnet Memo Program |
-| **4. Build Evidence, Documentation & Reproducibility** | **20 Điểm** | • 1-Click Launch chạy ngay trên trình duyệt (Zero setup friction)<br>• Bộ test kiểm chứng tự động đạt 100% PASS<br>• Đầy đủ tài liệu lâm sàng, cẩm nang phản biện y tế & kịch bản thuyết trình | `huongdantestdemo.txt`<br>`scratch/test_fall_logic.js`<br>`baocao.txt` |
-
----
-
 ## 🌟 1. Tổng Quan Dự Án (Executive Summary)
 
 **CareProtocol AI** giải quyết cuộc khủng hoảng lớn nhất trong ngành Chấn thương Chỉnh hình và Phục hồi Chức năng (PHCN):
@@ -42,7 +31,7 @@
 
 ---
 
-## 🧠 TIÊU CHÍ 1: Technical Difficulty & Depth (30 Điểm)
+## 🧠 Technical Difficulty & Depth (30 Điểm)
 
 ### 1.1. Edge AI Computer Vision 33 Điểm Khớp (Zero-Hardware)
 - **Công nghệ**: MediaPipe BlazePose tích hợp WebAssembly (WASM) & tăng tốc phần cứng WebGL/GPU.
@@ -83,7 +72,7 @@ Hầu hết các giải pháp thị giác máy tính thông thường bị lỗi
 
 ---
 
-## 🏛️ TIÊU CHÍ 2: Architecture & Smart Contract Quality (25 Điểm)
+## 🏛️ Architecture & Smart Contract Quality (25 Điểm)
 
 ### 2.1. Sơ Đồ Kiến Trúc Hệ Thống (Hybrid Off-Chain AI / On-Chain Proof)
 
@@ -128,7 +117,7 @@ Tại sao CareProtocol không lưu trữ toàn bộ dữ liệu video hay thông
 
 ---
 
-## ⚡ TIÊU CHÍ 3: Solana Stack, Composability & Performance (25 Điểm)
+## ⚡ Solana Stack, Composability & Performance (25 Điểm)
 
 ### 3.1. Tận Dụng Sức Mạnh Độc Bản Của Solana
 - **Chi phí cực thấp**: Chỉ ~`0.000005 SOL` (~0.001 USD) cho mỗi lần xác thực hiệp tập, giúp bệnh nhân nghèo có thể ghi nhận hàng chục buổi tập mỗi tuần mà không tốn chi phí.
@@ -162,7 +151,7 @@ Dữ liệu lưu trữ trên Solana Memo Program được đóng gói theo chu�
 
 ---
 
-## 🛠️ TIÊU CHÍ 4: Build Evidence, Documentation & Reproducibility (20 Điểm)
+## 🛠️ Build Evidence, Documentation & Reproducibility (20 Điểm)
 
 ### 4.1. Hướng Dẫn Cài Đặt & Chạy 1-Click (Quickstart Guide)
 
