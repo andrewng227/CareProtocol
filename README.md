@@ -268,6 +268,6 @@ Dự án được nghiên cứu và phát triển toàn diện bởi 2 Nhà Đ�
 
 ---
 
-## 📜 Bản Quyền & Giấy Phép (License)
+## 📜 Bản Quyền & Giấy Phép (License).
 
 Dự án được phân phối dưới giấy phép mã nguồn mở **MIT License**. Mọi đóng góp nghiên cứu vì sức khỏe cộng đồng người bệnh phục hồi chức năng đều được hoan nghênh và trân trọng.
