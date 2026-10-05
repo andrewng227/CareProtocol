@@ -38,7 +38,7 @@ function getGeminiKeys() {
   return defaultKeys;
 }
 
-const server = http.createServer((req, res) => {
+function handleRequest(req, res) {
   let reqPath = req.url.split('?')[0];
 
   // CORS Preflight
@@ -49,6 +49,16 @@ const server = http.createServer((req, res) => {
       'Access-Control-Allow-Headers': 'Content-Type, Authorization'
     });
     return res.end();
+  }
+
+  // API nội bộ: cấp key Gemini cho client fallback (chỉ chạy localhost, không deploy công khai)
+  if (reqPath === '/api/config') {
+    const keys = getGeminiKeys();
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*'
+    });
+    return res.end(JSON.stringify({ success: true, geminiKeys: keys }));
   }
 
   // API Chat AI Proxy cho Trợ lý Y tế CareProtocol
@@ -115,7 +125,7 @@ TÔNG GIỌNG VÀ PHONG CÁCH TƯ VẤN (NGHIÊM TÚC, CHUẨN MỰC Y KHOA & TE
         contents.push({ role: "user", parts: curParts });
 
         const keys = getGeminiKeys();
-        const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+        const models = ["gemini-flash-lite-latest", "gemini-3.8-flash", "gemini-flash-latest"];
 
         let aiAnswer = null;
 
@@ -283,11 +293,14 @@ TÔNG GIỌNG VÀ PHONG CÁCH TƯ VẤN (NGHIÊM TÚC, CHUẨN MỰC Y KHOA & TE
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('404 Not Found: ' + reqPath);
   }
-});
+}
 
 let opened = false;
-function startServer(portToTry) {
-  server.listen(portToTry, () => {
+
+function createAndListen(portToTry) {
+  const srv = http.createServer(handleRequest);
+
+  srv.listen(portToTry, () => {
     const url = `http://localhost:${portToTry}/CareProtocol_GiaoDien.html`;
     console.log('======================================================================');
     console.log(`   CAREPROTOCOL - LOCAL SERVER ĐANG CHẠY`);
@@ -305,15 +318,16 @@ function startServer(portToTry) {
     }
   });
 
-  server.on('error', (err) => {
+  srv.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       console.log(`⚠️ Cổng ${portToTry} đang bận, đang tự động thử cổng ${portToTry + 1}...`);
-      server.close();
-      startServer(portToTry + 1);
+      try { srv.close(); } catch (_) {}
+      createAndListen(portToTry + 1);
     } else {
       console.error('Lỗi khởi động máy chủ:', err);
     }
   });
 }
 
-startServer(PORT);
+createAndListen(PORT);
+

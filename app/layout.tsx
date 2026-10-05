@@ -17,6 +17,8 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <head>
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="stylesheet" href="/tailwind.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

@@ -1761,14 +1761,14 @@ YÊU CẦU TRẢ VỀ DUY NHẤT 1 ĐỐI TƯỢNG JSON HỢP LỆ (không bọc
         return nonMaleVi;
       }
 
-      // 3. Fallback giọng nữ quốc tế tự nhiên
-      const intlFemale = voices.find(v => {
-        const n = (v.name || "").toLowerCase();
-        return (n.includes("zira") || n.includes("jenny") || n.includes("aria") || n.includes("female")) && !isMaleVoiceName(n);
+      // 3. Nếu chỉ có Microsoft An (nam): Lấy nhưng nâng pitch lên thành giọng nữ
+      const anyVi = voices.find(v => {
+        const l = (v.lang || "").toLowerCase();
+        return l.startsWith("vi") || l.includes("vn") || (v.name || "").toLowerCase().includes("vietnam");
       });
-      if (intlFemale) {
-        globalLockedFemaleVoice = intlFemale;
-        return intlFemale;
+      if (anyVi) {
+        globalLockedFemaleVoice = anyVi;
+        return anyVi;
       }
 
       return null;
